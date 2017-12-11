@@ -1,0 +1,16 @@
+#! python
+
+
+def build(ctx):
+
+    ctx(
+        features='tex',
+        source='pre_analysis_plan.tex',
+        prompt=1,
+        name='pre_analysis_plan'
+    )
+    # Install to the project root.
+    ctx.install_files(
+        ctx.env.PROJECT_PATHS['PROJECT_ROOT'].abspath(),
+        'pre_analysis_plan.pdf'
+    )
