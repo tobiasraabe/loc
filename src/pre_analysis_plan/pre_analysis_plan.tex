@@ -1,4 +1,4 @@
-\documentclass{scrreprt}
+\documentclass{scrartcl}
 \def\datum{\today}
 \author{Tobias Raabe and Imke Strampe}
 \title{Malleability of Locus of Control by Traumatic Events\\[0.5cm]
@@ -20,42 +20,118 @@
     urlcolor={blue!80!black}
 }
 
+\usepackage[backend=biber, natbib=true, bibencoding=utf8, safeinputenc=true,
+bibstyle=authoryear, citestyle=authoryear-comp, maxcitenames=2, mincitenames=1,
+uniquelist=false, useprefix=true, maxbibnames=99, minbibnames=99, backref=true,
+backrefstyle=three, doi=true, isbn=false, sortcites=false, dashed=false,
+firstinits=true]{biblatex}
+
+\addbibresource{references.bib}
+
 \begin{document}
 \maketitle
 
-\textbf{Sources:} Here are three templates on how to write a pre-analysis plan.
-We should follow their examples.
-\begin{enumerate}
-    \item \url{https://blogs.worldbank.org/impactevaluations/a-pre-analysis-plan-checklist}
-    \item \url{https://www.povertyactionlab.org/sites/default/files/documents/Pre-Analysis\%20Plan_Wydick_2-12-13.pdf}
-    \item \url{http://cega.berkeley.edu/assets/cega_events/92/Pre-Analysis_Plan_Template_Alejandro_Ganimian.pdf}
-\end{enumerate}
+% \textbf{Sources:} Here are three templates on how to write a pre-analysis
+% plan. We should follow their examples.
+% \begin{enumerate}
+%     \item \url{https://blogs.worldbank.org/impactevaluations/a-pre-analysis-plan-checklist}
+%     \item \url{https://www.povertyactionlab.org/sites/default/files/documents/Pre-Analysis\%20Plan_Wydick_2-12-13.pdf}
+%     \item \url{http://cega.berkeley.edu/assets/cega_events/92/Pre-Analysis_Plan_Template_Alejandro_Ganimian.pdf}
+% \end{enumerate}
 
-\textbf{Todo}
-\begin{enumerate}
-    \item ...
-\end{enumerate}
+% \textbf{Todo}
+% \begin{itemize}
+%     \item
+% \end{itemize}
+
+\section{Introduction} % (fold)
+\label{sec:introduction}
+
+Empirical studies investigating the effect of non-cognitive skills often rely
+on the assumption that these skills are stable across the relevant time frame.
+In this study we want to challenge this assumption by focusing on the locus of
+control and how it is affected by traumatic events. This study is in line with
+the early work of \citet{alesina2002} who looked at changes in trust due to
+traumatic events. An extension of the framework to locus of control was done by
+\citet{cobb2013} who found that locus of control is varying across time but
+seems to be stable for the working-age population. \citet{buddelmeyer2016}
+built on top of their research and tried to find insurance effects of an
+internal locus of control to traumatic events.
+
+To limit researcher's degrees of freedom, this document serves as a pre-
+analysis plan for our research project.\footnote{The plan inspired by
+\href{https://blogs.worldbank.org/impactevaluations/a-pre-analysis-plan-
+checklist}{a blog post by David McKenzie (2012)} and
+\href{http://cega.berkeley.edu/assets/cega_events/92/Pre-
+Analysis_Plan_Template_Alejandro_Ganimian.pdf}{a template written by Alejandro
+Ganimian}.}
+
+% section introduction (end)
+
+\section{Data} % (fold)
+\label{sec:data}
+
+Our data comes from the GSOEP and focuses on all participants from 2005-2015
+which is about 16,000 households or 30,000 people. Our main sample restriction
+is the elicitation of the locus of control survey questions which are asked
+every five years from 2005 on. Additionally, the questions are posed to every
+teenager turning 17, so we are able to extend our sample with roughly 200
+teenagers every year since 2006.
+
+For the locus of control and other variables which are needed as controls, we
+need access to the individual and deceased person questionnaire, mother and
+child (0-3 years) and the youth questionnaire.
+
+We do not think that our sample suffers from sample bias due to attrition since
+the DIW Berlin, the institution in charge of the survey, makes tremendous
+effort to ensure that people stay in the sample and that the sample is
+refreshed from time to time. The locus of control questions have response rates
+of 99\% (19,800/20,000), 70\% (18,000/26,000) and 98,5\% (26,600/27,000) for
+the years 2005, 2010, 2015, respectively. The lower response rate in 2010 was
+due to a refreshment sample which did not receive the locus of control items.
+
+% section data (end)
+
+\section{Empirical Analysis} % (fold)
+\label{sec:empirical_analysis}
+
+\subsection{Specifications} % (fold)
+\label{sub:specifications}
 
 For investigating how traumas can influence the locus of control, we would
-conduct two specifications, a more general one and a more specific one. In the
-first more general specification of our analysis, we would include traumatic
-experiences concerning health, the social and the economic environment which
-are available in the GSOEP. We hypothesize that all of these experiences shift
-the locus of control towards a more external locus of control. Experiences
-concerning health are the birth of a child who is handicapped and the change in
-the degree of disability of a household member. Social events which could
-possibly influence the locus of control are a divorce, an unplanned pregnancy,
-a relationship breakup, the death of a partner, father, mother, child or a
-household member or any other family composition change. An experience
-concerning the economic environment could be the loss of a job which we would
-include as a dummy in our first specification. In our second, more precise
-specification, we would drop some of the variables from the three categories
-health, social and economic environment used before and include some in another
-way. Again, we hypothesize that they all lead to a more external locus of
-control. Concerning health, we would also include the birth of a handicapped
-child, but the change in the degree of disability of a household member would
-only be included in case of a change from 0 to 100\%.
+conduct three specifications, a more general, a more specific one and one
+including just the number of traumas experienced. In all specifications we
+would use change in locus of control as a dependent variable. In the GSOEP,
+locus of control is measured by asking 10 questions and we would use a
+principal component analysis to reduce this number of items.
 
+Regarding the controls, we will follow the specifications by \citet{cobb2013}:
+dummies for age groups, marital status, immigrant status, employment status,
+educational qualification dummies and log household income. Furthermore, we
+include a gender dummy and dummies for years into the regression.
+
+We would also like to control for the time passed since the last shock to
+identify depreciation effects of traumatic events, but we are not sure how to
+achieve this goal. One idea is to include lagged variables of traumatic events.
+
+In the first more general specification of our analysis, we would include
+traumatic experiences concerning health, the social and the economic
+environment. We hypothesize that all of these experiences shift the locus of
+control towards a more external locus of control. Experiences concerning health
+are the birth of a child who is handicapped and the change in the degree of
+disability of a household member. Social events which could possibly influence
+the locus of control are a divorce, an unplanned pregnancy, a relationship
+breakup, the death of a partner, father, mother, child or a household member or
+any other family composition change. An experience concerning the economic
+environment could be the loss of a job which we would include as a dummy in our
+first specification.
+
+In our second, more precise specification, we would drop some of the variables
+from the three categories health, social and economic environment used before
+and include some in another way. Again, we hypothesize that they all lead to a
+more external locus of control. Concerning health, we would also include the
+birth of a handicapped child, but the change in the degree of disability of a
+household member would only be included in case of a change from 0 to 100\%.
 The traumas concerning the social environment would also be an unplanned
 pregnancy, but neither a divorce, nor a relationship break-up as we suppose
 that the latter incidents are in most cases not exogenous and would therefore
@@ -66,4 +142,37 @@ only the job losses which are rather exogenous e.g. when the place of work
 closed or the person was dismissed by his or her employer, but not if there was
 e.g. a mutual agreement with the employer or the job was ended due to
 retirement.
+
+In order to find out whether the relationship between change in locus of
+control and negative life events varies with the number of negative life events
+reported, we include the total number of traumas in our third specification
+instead of using all the dummies for the different traumatic experiences. On
+top of that, we also include the total number squared to test for any non-
+linearities. In this specification, we do not control for the time between the
+occurrences of the traumas and the locus of control measurement.
+
+% subsection specifications (end)
+
+\subsection{Additional Considerations} % (fold)
+\label{sub:additional_considerations}
+
+
+We need to make adjustments to the standard errors in our regression:
+\begin{enumerate}
+    \item We use robust standard errors to account for heteroscedasticity in
+    the error terms as good practice.
+    \item Since we have a panel, we need to use clustered standard errors on
+    individual level to account for correlation between the same individual
+    over time.
+\end{enumerate}
+
+As for now, we do not want to engage in data imputation and will drop cases in
+which data is missing. Since we have no experience with the GSOEP, we are not
+sure whether this is the final word.
+
+% subsection additional_considerations (end)
+
+% section empirical_analysis (end)
+\printbibliography
+
 \end{document}
