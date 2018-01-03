@@ -21,6 +21,8 @@
 *.o
 *.out
 *.pdf
+!literature/paper/*.pdf
+!literature/soep/*.pdf
 *.pdfsync
 *.prj
 *.pyc
