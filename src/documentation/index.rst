@@ -11,4 +11,6 @@ Welcome to the Malleability of Locus of Control by Traumatic Events project's do
     :maxdepth: 2
 
     introduction
+    data
     paper
+    zreferences

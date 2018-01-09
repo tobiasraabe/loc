@@ -1,5 +1,5 @@
 Malleability of Locus of Control by Traumatic Events
-===================================================
+====================================================
 
 Getting started
 ---------------
@@ -34,4 +34,10 @@ If you want to delete all files in the ``build/`` folder, run
 [Todo](TODO.md)
 ---------------
 
-A list of what has to be done.
+
+Additional resources
+--------------------
+
+- [statsmodels tutorial on standard errors](http://www.vincentgregoire.com/standard-errors-in-python/)
+- [PCA tutorial](https://jakevdp.github.io/PythonDataScienceHandbook/05.09-principal-component-analysis.html)
+-

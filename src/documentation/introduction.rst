@@ -17,12 +17,12 @@ Getting started
 
 **This assumes you have completed the steps in the** `README.md file <https://github.com/hmgaudecker/econ-project-templates/tree/python#templates-for-reproducible-research-projects-in-economics>`_ **and everything worked.**
 
-The logic of the project template works by step of the analysis: 
+The logic of the project template works by step of the analysis:
 
 1. Data management
 2. The actual estimations / simulations / ?
 3. Visualisation and results formatting (e.g. exporting of LaTeX tables)
-4. Research paper and presentations. 
+4. Research paper and presentations.
 
 It can be useful to have code and model parameters available to more than one of these steps, in that case see sections :ref:`model_specifications`, :ref:`model_code`, and :ref:`library`.
 
@@ -35,7 +35,14 @@ First of all, think about whether this structure fits your needs -- if it does n
 
 Later adjustments should be painlessly possible, so things won't be set in stone.
 
-Once you have done that, move your source data to **src/original_data/** and start filling up the actual steps of the project workflow (data management, analysis, final steps, paper). All you should need to worry about is to call the correct task generators in the wscript files. Always specify the actions in the wscript that lives in the same directory as your main source file. Make sure you understand how the paths work in Waf and how to use the auto-generated files in the language you are using particular language (see the section :ref:`project_paths` below).
+Once you have done that, move your source data to **src/original_data/** and
+start filling up the actual steps of the project workflow (data management,
+analysis, final steps, paper). All you should need to worry about is to call
+the correct task generators in the wscript files. Always specify the actions in
+the wscript that lives in the same directory as your main source file. Make
+sure you understand how the paths work in Waf and how to use the auto-generated
+files in the language you are using particular language (see the section
+:ref:`project_paths` below).
 
 
 .. _project_paths:

@@ -1,0 +1,26 @@
+#! python
+
+
+def build(ctx):
+
+    ctx(
+        features='run_py_script',
+        source='create_panel.py',
+        deps=[
+            ctx.path_to(ctx, 'IN_DATA', 'pl.dta'),
+            ctx.path_to(ctx, 'IN_DATA', 'pgen.dta'),
+        ],
+        target=[
+            ctx.path_to(ctx, 'OUT_DATA', 'panel.pkl'),
+            ctx.path_to(ctx, 'OUT_DATA', 'loc_raw.pkl'),
+        ],
+        name='create_panel'
+    )
+
+    ctx(
+        features='run_py_script',
+        source='prepare_loc.py',
+        deps=ctx.path_to(ctx, 'OUT_DATA', 'loc_raw.pkl'),
+        target=ctx.path_to(ctx, 'OUT_DATA', 'loc.pkl'),
+        name='prepare_loc'
+    )
