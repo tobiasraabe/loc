@@ -11,6 +11,7 @@ def build(ctx):
             ctx.path_to(ctx, 'IN_DATA', 'pgen.dta'),
         ],
         target=[
+            ctx.path_to(ctx, 'OUT_DATA', 'panel_inspection.pkl'),
             ctx.path_to(ctx, 'OUT_DATA', 'panel.pkl'),
             ctx.path_to(ctx, 'OUT_DATA', 'loc_raw.pkl'),
         ],
