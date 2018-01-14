@@ -7,11 +7,8 @@ import pandas as pd
 import numpy as np
 from collections import OrderedDict
 from bld.project_paths import project_paths_join as ppj
+from src import EVENT_VARIABLES
 
-
-EVENT_VARIABLES = ['DEATH_CHILD', 'DEATH_FATHER', 'DEATH_HH_PERSON',
-                   'DEATH_MOTHER', 'DEATH_PARTNER', 'DIVORCED',
-                   'HH_COMP_CHANGE', 'LAST_JOB_ENDED', 'SEPARATED']
 
 NAN_IDENTIFIERS = [
     '[-1] keine Angabe', '[-2] trifft nicht zu',
@@ -41,13 +38,9 @@ VARIABLE_DICT_PL = {
     'pid': 'ID',  # permanent personal id
     # Characteristics
     'pla0009': 'GENDER',  # Gender
-    'plb0022': 'EMPLOYMENT_STATUS',  # Employment status, potentially sy
-                                     # because of comparison with
-                                     # LAST_JOB_ENDED_MONTH
-    'pld0131': 'MARITAL_STATUS',  # Marital status
-    'plb0298': 'LAST_JOB_ENDED_MONTH_PY',  # last job ended, previous year
-    'plb0299': 'LAST_JOB_ENDED_MONTH_SY',  # last job ended, survey year
+    'plb0022': 'EMPLOYMENT_STATUS',  # Employment status
     'plb0304': 'REASON_JOB_TERMINATED',  # Why job terminated
+    'pld0131': 'MARITAL_STATUS',  # Marital status
     # 'pld0135': 'MARRIED_MONTH_SY',  # Month married survey year
     # 'pld0136': 'MARRIED_MONTH_PY',  # Month married previous year
     'pld0141': 'DIVORCED_MONTH_SY',  # Month divorced survey year, doc error
@@ -170,13 +163,33 @@ def create_panel():
     df['YEAR_2010_2015'] = df.YEAR.isin([2010, 2011, 2012, 2013, 2014, 2015])
     df['YEAR_2010_2015_SUM'] = df.groupby('ID').YEAR_2010_2015.transform(sum)
     # Select only valid years when range is complete
-    df = df.loc[(df.YEAR_2005_2010 & (df.YEAR_2005_2010_SUM == 6)) |
-                (df.YEAR_2010_2015 & (df.YEAR_2010_2015_SUM == 6))]
+    df = df.loc[
+        (df.YEAR.isin([2005, 2006, 2007, 2008, 2009, 2010]) &
+         (df.YEAR_2005_2010_SUM == 6)) |
+        (df.YEAR.isin([2010, 2011, 2012, 2013, 2014, 2015]) &
+         (df.YEAR_2010_2015_SUM == 6))
+    ]
     # Test that for each individual, there are only 6 or 11 possible
     # observations. There are 6 if individuals are only observed over one
     # period, 2005-2010 or 2010-2015, and 11 if they are observed over the
     # whole range.
     assert df.groupby('ID').YEAR.count().isin([6, 11]).all()
+    # Drop temporary columns
+    df.drop(['YEAR_2005_2010', 'YEAR_2005_2010_SUM',
+             'YEAR_2010_2015', 'YEAR_2010_2015_SUM'], axis='columns',
+            inplace=True)
+
+    return df
+
+
+def extract_loc(df):
+    # Copy loc dataframe and drop columns in other frame
+    loc = df.loc[df.YEAR.isin([2005, 2010, 2015]),
+                 ['ID', 'YEAR'] + [i for i in df if 'LOC' in i]].copy()
+    df.drop([i for i in df if 'LOC' in i], axis='columns', inplace=True)
+
+    # Save loc
+    loc.to_pickle(ppj('OUT_DATA', 'loc_raw.pkl'))
 
     return df
 
@@ -192,22 +205,24 @@ def clean_common_variables(df):
     # Drop BIRTH_YEAR
     df.drop('BIRTH_YEAR', axis='columns', inplace=True)
 
-    # EMPLOYMENT_STATUS Create states according to Preuss, Hennecke (2017) who
-    # sort employed, part-time employed and self-employed to employed,
-    # unemployed and others.
+    # EMPLOYMENT_STATUS
     employment_dict = {
-        '[1] Voll erwerbstaetig': 'Employed',
-        '[2] Teilzeitbeschaeftigung': 'Employed',
-        '[3] Ausbildung,Lehre': 'Other',
-        '[4] Geringfuegig beschaeftigt': 'Other',
-        '[5] Altersteilzeit mit Arbeitszeit Null': 'Other',
-        '[6] Freiwilliger Wehrdienst': 'Other',
-        '[7] Freiwsoziales/oekol.Jahr, Bundesfreiwilligendienst': 'Other',
-        '[8] Werkstatt fuer behinderte Menschen': 'Other',
+        '[1] Voll erwerbstaetig': 'Full-Time Employment',
+        '[2] Teilzeitbeschaeftigung': 'Regular Part-Time Employment',
+        '[3] Ausbildung,Lehre': 'Vocational Training',
+        '[4] Geringfuegig beschaeftigt': 'Marginally employed',
+        '[5] Altersteilzeit mit Arbeitszeit Null':
+        'Near Retirement, Zero Working Hours',
+        '[6] Freiwilliger Wehrdienst': 'Voluntary Military Service',
+        '[7] Freiwsoziales/oekol.Jahr, Bundesfreiwilligendienst':
+        'Vol. Soc. Y. / Vol. Eco. Y. / Feder. Vol. Srvc',
+        '[8] Werkstatt fuer behinderte Menschen': 'Sheltered workshop',
         '[9] Nicht erwerbstaetig': 'Not Employed'
     }
-    df.EMPLOYMENT_STATUS.replace(employment_dict, inplace=True)
-    df.EMPLOYMENT_STATUS = df.EMPLOYMENT_STATUS.astype('category')
+    df.EMPLOYMENT_STATUS.cat.rename_categories(employment_dict, inplace=True)
+    df.EMPLOYMENT_STATUS.cat.as_unordered(inplace=True)
+    # Drop three missing values in EMPLOYMENT_STATUS
+    # df = df.loc[df.EMPLOYMENT_STATUS.notnull()]
 
     # GENDER
     # Rename categories
@@ -238,16 +253,18 @@ def clean_common_variables(df):
 
     # MARITAL STATUS
     marital_status_dict = {
-        '[1] Verheiratet, zusammenlebend': 'Relationship',
-        '[2] Verheiratet, getrenntlebend': 'Single',
+        '[1] Verheiratet, zusammenlebend': 'Married, live together',
+        '[2] Verheiratet, getrenntlebend': 'Married, separated',
         '[3] Ledig': 'Single',
-        '[4] Geschieden, eing. gleichg. Partn. aufgehoben': 'Single',
-        '[5] Verwitwet, Lebenspartner/in verstorben': 'Single',
-        '[6] Eing. gleichg. Partn., zusammenlebend': 'Relationship',
-        '[7] Eing. gleichg. Partn., getrenntlebend': 'Single',
+        '[4] Geschieden, eing. gleichg. Partn. aufgehoben':
+        'Divorced, registered partnership dissolved',
+        '[5] Verwitwet, Lebenspartner/in verstorben': 'Widowed',
+        '[6] Eing. gleichg. Partn., zusammenlebend':
+        'Registered same-sex partnership, living together',
+        '[7] Eing. gleichg. Partn., getrenntlebend':
+        'Registered same-sex partnership, separated'
     }
-    df.MARITAL_STATUS.replace(marital_status_dict, inplace=True)
-    df.MARITAL_STATUS = df.MARITAL_STATUS.astype('category')
+    df.MARITAL_STATUS.cat.rename_categories(marital_status_dict, inplace=True)
 
     # As Preuss, Hennecke (2017), we only consider plant closure and
     # displacement by employer to be sufficiently exogenous. Other reasons are
@@ -268,18 +285,6 @@ def clean_common_variables(df):
         '[13] Sonstige Gruende']
     df.REASON_JOB_TERMINATED.cat.remove_categories(reason_job_terminated_list,
                                                    inplace=True)
-
-    return df
-
-
-def extract_loc(df):
-    # Copy loc dataframe and drop columns in other frame
-    loc = df.loc[df.YEAR.isin([2005, 2010, 2015]),
-                 ['ID', 'YEAR', 'AGE'] + [i for i in df if 'LOC' in i]].copy()
-    df.drop([i for i in df if 'LOC' in i], axis='columns', inplace=True)
-
-    # Save loc
-    loc.to_pickle(ppj('OUT_DATA', 'loc_raw.pkl'))
 
     return df
 
@@ -321,16 +326,9 @@ def clean_event_variables(df):
                df[var + '_MONTH_SY'].notnull(),
                var + '_BEFORE_INTERVIEW'] = True
 
-    # Save for exploration
-    df.to_pickle(ppj('OUT_DATA', 'panel_inspection.pkl'))
-    # Separate the sample in the two periods, 2005-2010 and 2010-2015. We
-    # cannot simply use years from 2010-2015 for the second period, because
-    # there would exist overhanging observations which have only a complete
-    # history over the first period.
-    df_2005_2010 = df.loc[df.YEAR_2005_2010 &
-                          (df.YEAR_2005_2010_SUM == 6)].copy()
-    df_2010_2015 = df.loc[df.YEAR_2010_2015 &
-                          (df.YEAR_2010_2015_SUM == 6)].copy()
+    # Separate the sample in the two periods, 2005-2010 and 2010-2015.
+    df_2005_2010 = df.loc[df.YEAR.between(2005, 2010)].copy()
+    df_2010_2015 = df.loc[df.YEAR.between(2010, 2015)].copy()
 
     # Delete events which are not occurring in the specific periods
     for var in EVENT_VARIABLES:
@@ -369,42 +367,48 @@ def clean_event_variables(df):
             df['EVENT_' + var + '_COUNT_PREVIOUS'] = (
                 df['EVENT_' + var + '_COUNT'] - 1).clip(lower=0)
 
-    # Sort dataframes
-    df_2005_2010.sort_values(['ID', 'YEAR'], axis='rows', inplace=True)
-    df_2010_2015.sort_values(['ID', 'YEAR'], axis='rows', inplace=True)
-    # Get last row of each ID
-    df_2005_2010 = df_2005_2010.groupby('ID', as_index=False).last()
-    df_2010_2015 = df_2010_2015.groupby('ID', as_index=False).last()
-    # Save datasets for inspection
-    df_2005_2010.to_pickle(ppj('OUT_DATA', 'panel_2005_2010_inspection.pkl'))
-    df_2010_2015.to_pickle(ppj('OUT_DATA', 'panel_2010_2015_inspection.pkl'))
-    # Merge two periods
-    df_merged = df_2005_2010.append(df_2010_2015)
-
-    return df_merged
+    return df_2005_2010, df_2010_2015
 
 
-def drop_unused_columns_and_observations(df):
+def create_valid_event_variables_and_covariates(unaltered_df, event):
+    # Create a copy of the dataframe to not alter the passed df
+    df = unaltered_df.copy()
+    # Create list of covariates
+    covariates = [i for i in EVENT_VARIABLES if i != event]
+
+    for cov in covariates:
+        # Create identifier whether the specific event happened before the
+        # event of a covariate. Important is that there are only 5 cases
+        # where events happened in the same month. Therefore, we will treat
+        # them as if they have occurred simultaneously.
+        df[event + '_BEFORE_' + cov] = (
+            df[event + '_MONTH'] < df[cov + '_MONTH'])
+        # Change ongoing event count of covariate by -1 if event happened
+        # before the covariate event.
+        cond_same_year_event = (
+            df[cov + '_MONTH'].notnull() & df[event + '_MONTH'].notnull())
+        df.loc[df[event + '_BEFORE_' + cov] & cond_same_year_event,
+               'EVENT_' + cov + '_COUNT'] = (
+            df['EVENT_' + cov + '_COUNT'] - 1)
+
+    return df
+
+
+def drop_unused_columns_and_observations(df, event_name):
     # Drop columns
     unused_columns = []
-    unused_columns += ['YEAR_2005_2010', 'YEAR_2005_2010_SUM',
-                       'YEAR_2010_2015', 'YEAR_2010_2015_SUM']
     unused_columns += [i for i in df if 'SY' in i]
     unused_columns += [i for i in df if 'PY' in i]
     unused_columns += [i for i in df if '_MONTH' in i]
     unused_columns += [i for i in df if 'BEFORE_INTERVIEW' in i]
-    unused_columns += ['REASON_JOB_TERMINATED',
-                       'LEGALLY_HANDICAPPED_PERC_CHANGE']
-    unused_columns += ['EVENT_' + i for i in EVENT_VARIABLES]
+    unused_columns += [i for i in df if event_name + '_BEFORE_' in i]
+    unused_columns += [i for i in df
+                       if ('COUNT_PREVIOUS' in i) & ~(event_name in i)]
+    unused_columns += [
+        'EVENT_' + i for i in EVENT_VARIABLES if i != event_name]
     df.drop(unused_columns, axis='columns', inplace=True)
-    # Create dummies for events
-    for i in EVENT_VARIABLES:
-        df['EVENT_' + i] = (df['EVENT_' + i + '_COUNT'] != 0)
-    # Restore dtypes after groupby.Groupby.last() operation
-    df.GENDER = df.GENDER.astype('category')
-    df.MARITAL_STATUS = df.MARITAL_STATUS.astype('category')
-    # Sort values
-    df.sort_values(['ID', 'YEAR'], axis='rows', inplace=True)
+    # Drop observations
+    # df = df.loc[df['EVENT_' + event_name]]
 
     return df
 
@@ -412,13 +416,29 @@ def drop_unused_columns_and_observations(df):
 if __name__ == '__main__':
     # Create a unaggregated panel from 2005 to 2015
     df = create_panel()
-    # Clean common variables
-    df = clean_common_variables(df)
     # Extract LOC for separate processing
     df = extract_loc(df)
+    # Clean common variables
+    df = clean_common_variables(df)
     # Clean event variables
-    df = clean_event_variables(df)
-    # Clean event data
-    df = drop_unused_columns_and_observations(df)
-    # Save the current dataframe
-    df.to_pickle(ppj('OUT_DATA', f'panel.pkl'))
+    df_2005_2010, df_2010_2015 = clean_event_variables(df)
+    # For each event, process both periods by creating
+    #       1. event identifier and counts of the specific event
+    #       2. event counts of other events in relation to each specific event
+    #          to have valid counts of other events at the specific event as
+    #          covariates.
+    #       3. Reduce panel.
+    for event in EVENT_VARIABLES:
+        container = []
+        for df in [df_2005_2010, df_2010_2015]:
+            df_temp = create_valid_event_variables_and_covariates(
+                df, event)
+            container.append(df_temp)
+        # Merge both periods for one event to one dataframe
+        df_temp = container[0]
+        df_merged = df_temp.append(container[1])
+        # Clean event data
+        df_merged = drop_unused_columns_and_observations(df_merged, event)
+        # Save the current dataframe
+        df_merged.to_pickle(
+            ppj('OUT_DATA', f'panel_{event.lower()}.pkl'))
