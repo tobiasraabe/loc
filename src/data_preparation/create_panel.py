@@ -181,18 +181,6 @@ def create_panel():
     return df
 
 
-def extract_loc(df):
-    # Copy loc dataframe and drop columns in other frame
-    loc = df.loc[df.YEAR.isin([2005, 2010, 2015]),
-                 ['ID', 'YEAR'] + [i for i in df if 'LOC' in i]].copy()
-    df.drop([i for i in df if 'LOC' in i], axis='columns', inplace=True)
-
-    # Save loc
-    loc.to_pickle(ppj('OUT_DATA', 'loc_raw.pkl'))
-
-    return df
-
-
 def clean_common_variables(df):
     # BIRTH_YEAR
     # Replace -5 with np.nan
@@ -284,6 +272,18 @@ def clean_common_variables(df):
     return df
 
 
+def extract_loc(df):
+    # Copy loc dataframe and drop columns in other frame
+    loc = df.loc[df.YEAR.isin([2005, 2010, 2015]),
+                 ['ID', 'YEAR', 'AGE'] + [i for i in df if 'LOC' in i]].copy()
+    df.drop([i for i in df if 'LOC' in i], axis='columns', inplace=True)
+
+    # Save loc
+    loc.to_pickle(ppj('OUT_DATA', 'loc_raw.pkl'))
+
+    return df
+
+
 def clean_event_variables(df):
     for var in EVENT_VARIABLES:
         # Shift var_MONTH_PY in the previous year
@@ -327,8 +327,10 @@ def clean_event_variables(df):
     # cannot simply use years from 2010-2015 for the second period, because
     # there would exist overhanging observations which have only a complete
     # history over the first period.
-    df_2005_2010 = df.loc[df.YEAR_2005_2010_SUM == 6].copy()
-    df_2010_2015 = df.loc[df.YEAR_2010_2015_SUM == 6].copy()
+    df_2005_2010 = df.loc[df.YEAR_2005_2010 &
+                          (df.YEAR_2005_2010_SUM == 6)].copy()
+    df_2010_2015 = df.loc[df.YEAR_2010_2015 &
+                          (df.YEAR_2010_2015_SUM == 6)].copy()
 
     # Delete events which are not occurring in the specific periods
     for var in EVENT_VARIABLES:
@@ -373,6 +375,9 @@ def clean_event_variables(df):
     # Get last row of each ID
     df_2005_2010 = df_2005_2010.groupby('ID', as_index=False).last()
     df_2010_2015 = df_2010_2015.groupby('ID', as_index=False).last()
+    # Save datasets for inspection
+    df_2005_2010.to_pickle(ppj('OUT_DATA', 'panel_2005_2010_inspection.pkl'))
+    df_2010_2015.to_pickle(ppj('OUT_DATA', 'panel_2010_2015_inspection.pkl'))
     # Merge two periods
     df_merged = df_2005_2010.append(df_2010_2015)
 
@@ -407,10 +412,10 @@ def drop_unused_columns_and_observations(df):
 if __name__ == '__main__':
     # Create a unaggregated panel from 2005 to 2015
     df = create_panel()
-    # Extract LOC for separate processing
-    df = extract_loc(df)
     # Clean common variables
     df = clean_common_variables(df)
+    # Extract LOC for separate processing
+    df = extract_loc(df)
     # Clean event variables
     df = clean_event_variables(df)
     # Clean event data

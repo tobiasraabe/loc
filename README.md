@@ -38,6 +38,7 @@ If you want to delete all files in the ``build/`` folder, run
 Additional resources
 --------------------
 
+- [statsmodels tutorial on formulas](http://www.statsmodels.org/dev/example_formulas.html)
 - [statsmodels tutorial on standard errors](http://www.vincentgregoire.com/standard-errors-in-python/)
 - [PCA tutorial](https://jakevdp.github.io/PythonDataScienceHandbook/05.09-principal-component-analysis.html)
 - [Python Data Science Handbook](https://jakevdp.github.io/PythonDataScienceHandbook/)
