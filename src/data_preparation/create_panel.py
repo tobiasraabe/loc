@@ -254,7 +254,7 @@ def clean_common_variables(df):
     # Drop BIRTH_YEAR
     df.drop('BIRTH_YEAR', axis='columns', inplace=True)
 
-    # EMPLOYMENT_STATUS Create states according to Preuss, Hennecke (2017) who
+    # EMPLOYMENT_STATUS: Create states according to Preuss, Hennecke (2017) who
     # sort employed, part-time employed and self-employed to employed,
     # unemployed and others.
     employment_dict = {
@@ -330,6 +330,11 @@ def clean_common_variables(df):
         '[13] Sonstige Gruende']
     df.REASON_JOB_TERMINATED.cat.remove_categories(reason_job_terminated_list,
                                                    inplace=True)
+
+    # Shift REASON_JOB_TERMINATED in the previous period because it is
+    # ambiguous whether the value belongs to the survey year or previous year.
+    df['REASON_JOB_TERMINATED_SHIFTED'] = df.groupby(
+        'ID').REASON_JOB_TERMINATED.transform(lambda x: x.shift(-1))
 
     return df
 
@@ -484,6 +489,26 @@ def clean_event_variables(df):
                          (df_2010_2015[var + '_BEFORE_INTERVIEW'] == 0),
                          var + '_MONTH'] = np.nan
 
+    # Preuss, Hennecke (2017) delete every observation with more than three
+    # job losses between two LOC interviews. We need to save the current count
+    # of displacements.
+    df_2005_2010['LAST_JOB_ENDED_COUNT_FULL'] = df_2005_2010.groupby(
+        'ID').LAST_JOB_ENDED_MONTH.transform('count')
+    df_2010_2015['LAST_JOB_ENDED_COUNT_FULL'] = df_2010_2015.groupby(
+        'ID').LAST_JOB_ENDED_MONTH.transform('count')
+    # As PH (2017), we only focus on displacement by employer and plant
+    # closure. Therefore, we will delete every other instances of job loss from
+    # LAST_JOB_ENDED_MONTH. As all categories are eliminated from
+    # REASON_JOB_TERMINATED which are not valid by the considerations of
+    # Preuss, Hennecke (2017), we can eliminate all job losses where
+    # REASON_JOB_TERMINATED and REASON_JOB_TERMINATED_SHIFTED are NaN.
+    df_2005_2010.loc[df_2005_2010.REASON_JOB_TERMINATED.isnull() &
+                     df_2005_2010.REASON_JOB_TERMINATED_SHIFTED.isnull(),
+                     'LAST_JOB_ENDED_MONTH'] = np.nan
+    df_2010_2015.loc[df_2010_2015.REASON_JOB_TERMINATED.isnull() &
+                     df_2010_2015.REASON_JOB_TERMINATED_SHIFTED.isnull(),
+                     'LAST_JOB_ENDED_MONTH'] = np.nan
+
     # Create event identifiers, ongoing counts of current events and ongoing
     # counts of previous events.
     for df in [df_2005_2010, df_2010_2015]:
@@ -555,21 +580,22 @@ def clean_event_variables(df):
 def drop_unused_columns_and_observations(df):
     # Drop columns
     unused_columns = []
+    unused_columns += ['ID_ORIGINAL_HH']
     unused_columns += ['YEAR_2005_2010', 'YEAR_2005_2010_SUM',
                        'YEAR_2010_2015', 'YEAR_2010_2015_SUM']
     unused_columns += [i for i in df if 'SY' in i]
     unused_columns += [i for i in df if 'PY' in i]
     unused_columns += [i for i in df if '_MONTH' in i]
     unused_columns += [i for i in df if 'BEFORE_INTERVIEW' in i]
-    # unused_columns += ['REASON_JOB_TERMINATED',
-    #                    'LEGALLY_HANDICAPPED_PERC_CHANGE']
+    unused_columns += ['REASON_JOB_TERMINATED',
+                       'REASON_JOB_TERMINATED_SHIFTED']
     unused_columns += ['EVENT_' + i for i in EVENT_VARIABLES]
     unused_columns += ['ID_MOTHER', 'MOTHER_PREGNANT_AT_PQ_YEAR']
     unused_columns += ['EDUCATION_GROUPS_CASMIN', 'EDUCATION_GROUPS_ISCED11',
                        'YEARS_EDUCATION']
     df.drop(unused_columns, axis='columns', inplace=True)
     # Drop all 25 observations with NaNs in EDUCATION_GROUPS_ISCED97
-    df = df.loc[df.EDUCATION_GROUPS_ISCED97.notnull()]
+    df.dropna(subset=['EDUCATION_GROUPS_ISCED97'], axis='rows', inplace=True)
     # Create dummies for events
     for i in EVENT_VARIABLES:
         df['EVENT_' + i] = (df['EVENT_' + i + '_COUNT'] != 0)
