@@ -10,9 +10,10 @@ components, GSOEPLong and GSOEPCore.
 GSOEPLong
 ---------
 
+- pequiv.dta
 - pl.dta
 - pgen.dta
-
+- ppfad.dta
 
 GSOEPCore
 ---------

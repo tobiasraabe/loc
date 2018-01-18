@@ -3,15 +3,20 @@
 """This module creates the panel data set from the SOEP data files."""
 
 
-import pandas as pd
+import calendar
+import datetime
 import numpy as np
-from collections import OrderedDict
+import pandas as pd
+
 from bld.project_paths import project_paths_join as ppj
+from collections import OrderedDict
+from dateutil.relativedelta import relativedelta
 
 
-EVENT_VARIABLES = ['DEATH_CHILD', 'DEATH_FATHER', 'DEATH_HH_PERSON',
-                   'DEATH_MOTHER', 'DEATH_PARTNER', 'DIVORCED',
-                   'HH_COMP_CHANGE', 'LAST_JOB_ENDED', 'SEPARATED']
+EVENT_VARIABLES = ['CHILD_DISORDER', 'DEATH_CHILD', 'DEATH_FATHER',
+                   'DEATH_HH_PERSON', 'DEATH_MOTHER', 'DEATH_PARTNER',
+                   'DIVORCED', 'HH_COMP_CHANGE', 'LAST_JOB_ENDED',
+                   'PREGNANCY_UNPLANNED', 'SEPARATED']
 
 NAN_IDENTIFIERS = [
     '[-1] keine Angabe', '[-2] trifft nicht zu',
@@ -93,6 +98,61 @@ VARIABLE_DICT_PGEN = {
 }
 
 RETAINED_COLUMNS_PGEN = list(VARIABLE_DICT_PGEN.keys())
+
+
+MONTH_TO_NUMBER = {v: k for k, v in enumerate(calendar.month_name)}
+MONTH_TO_NUMBER.pop('')
+
+
+def calculate_time_difference_between_event_int(
+        x, event, end_year_interview):
+    try:
+        x[event + '_MONTH']
+        start_month = x[event + '_MONTH']
+        start_year = x.YEAR
+        end_month = x[f'INT_MONTH_{end_year_interview}']
+        end_year = end_year_interview
+
+        start_month_number = MONTH_TO_NUMBER[start_month]
+        end_month_number = MONTH_TO_NUMBER[end_month]
+
+        start = datetime.datetime.strptime(
+            f'{start_year} {start_month_number}', '%Y %m')
+        end = datetime.datetime.strptime(
+            f'{end_year} {end_month_number}', '%Y %m')
+
+        time_diff = relativedelta(end, start)
+
+        difference_in_months = time_diff.years * 12 + time_diff.months
+
+        return difference_in_months
+    except KeyError:
+        return np.nan
+
+
+def assert_same_number_of_observations(func):
+    """This decorator ensures that the number of observations does not change
+    by this transformation of the dataframe."""
+    def wrapper(*args, **kwargs):
+        num_obs_before_transformation = df.shape[0]
+        transformed_df = func(*args, **kwargs)
+
+        num_obs_after_transformation = transformed_df.shape[0]
+        assert num_obs_before_transformation == num_obs_after_transformation
+
+        return transformed_df
+    return wrapper
+
+
+def report_shape_of_dataframe(func):
+    def wrapper(*args, **kwargs):
+        transformed_df = func(*args, **kwargs)
+
+        shape = transformed_df.shape
+        print(f'Shape is now: {shape}.')
+
+        return transformed_df
+    return wrapper
 
 
 def fill_with_mode(x):
@@ -181,6 +241,8 @@ def create_panel():
     return df
 
 
+@report_shape_of_dataframe
+@assert_same_number_of_observations
 def clean_common_variables(df):
     # BIRTH_YEAR
     # Replace -5 with np.nan
@@ -272,6 +334,41 @@ def clean_common_variables(df):
     return df
 
 
+@report_shape_of_dataframe
+@assert_same_number_of_observations
+def merge_with_edu_groups(df):
+    # Load dataset
+    edu_groups = pd.read_pickle(ppj('OUT_DATA', 'edu_groups.pkl'))
+    # Merge with panel
+    df = df.merge(edu_groups, on=['ID', 'YEAR'], how='left')
+
+    return df
+
+
+@report_shape_of_dataframe
+@assert_same_number_of_observations
+def merge_with_edu_years(df):
+    # Load dataset
+    edu_years = pd.read_pickle(ppj('OUT_DATA', 'edu_years.pkl'))
+    # Merge with panel
+    df = df.merge(edu_years, on=['ID', 'YEAR'], how='left')
+
+    return df
+
+
+@report_shape_of_dataframe
+@assert_same_number_of_observations
+def merge_with_migration(df):
+    # Load dataset
+    mig = pd.read_pickle(ppj('OUT_DATA', 'migration.pkl'))
+    # Merge with panel
+    df = df.merge(mig, on='ID', how='left')
+
+    return df
+
+
+@report_shape_of_dataframe
+@assert_same_number_of_observations
 def extract_loc(df):
     # Copy loc dataframe and drop columns in other frame
     loc = df.loc[df.YEAR.isin([2005, 2010, 2015]),
@@ -284,45 +381,81 @@ def extract_loc(df):
     return df
 
 
+@report_shape_of_dataframe
+@assert_same_number_of_observations
+def merge_with_preg_dis(df):
+    # Load other datasets
+    preg = pd.read_pickle(ppj('OUT_DATA', 'preg.pkl'))
+    dis = pd.read_pickle(ppj('OUT_DATA', 'dis.pkl'))
+    # Merge with df
+    df = df.merge(preg, how='left', on=['ID_HH', 'YEAR'])
+    df = df.merge(dis, how='left', on=['ID_HH', 'YEAR'])
+    # Combine multiple columns
+    df['ID_MOTHER'] = df.ID_MOTHER_x.fillna(df.ID_MOTHER_y)
+    df['MOTHER_PREGNANT_AT_PQ_YEAR'] = df.MOTHER_PREGNANT_AT_PQ_YEAR_x.fillna(
+        df.MOTHER_PREGNANT_AT_PQ_YEAR_y)
+    df.drop(['ID_MOTHER_x', 'ID_MOTHER_y', 'MOTHER_PREGNANT_AT_PQ_YEAR_x',
+             'MOTHER_PREGNANT_AT_PQ_YEAR_y'], axis='columns', inplace=True)
+
+    return df
+
+
+@report_shape_of_dataframe
 def clean_event_variables(df):
+
     for var in EVENT_VARIABLES:
-        # Shift var_MONTH_PY in the previous year
-        df[var + '_MONTH_PY_SHIFTED'] = df.groupby(
-            'ID')[var + '_MONTH_PY'].shift(-1)
-        # Use var_MONTH_SY where both agree
-        df.loc[df[var + '_MONTH_SY'] == df[var + '_MONTH_PY_SHIFTED'],
-               var + '_MONTH'] = df[var + '_MONTH_SY']
-        # Use var_MONTH_PY_SHIFTED where var_MONTH_SY is NaN
-        df.loc[df[var + '_MONTH_SY'].isnull() &
-               df[var + '_MONTH_PY_SHIFTED'].notnull(),
-               var + '_MONTH'] = df[var + '_MONTH_PY_SHIFTED']
-        # Use var_MONTH_SY where var_MONTH_PY_SHIFTED is NaN or they
-        # disagree because the PY could be more error prone to memory loss
-        df.loc[df[var + '_MONTH_SY'].notnull() &
-               df[var + '_MONTH_PY_SHIFTED'].isnull(),
-               var + '_MONTH'] = df[var + '_MONTH_SY']
-        df.loc[df[var + '_MONTH_SY'] != df[var + '_MONTH_PY_SHIFTED'],
-               var + '_MONTH'] = df[var + '_MONTH_SY']
-        # Make var_MONTH a categorical
-        df[var + '_MONTH'] = df[var + '_MONTH'].astype('category')
-        df[var + '_MONTH'].cat.set_categories(MONTH_DICT.values(),
-                                              ordered=True, inplace=True)
+        # These variables already have one column containing months and do not
+        # need to be reduced.
+        if var in ['CHILD_DISORDER', 'PREGNANCY_UNPLANNED']:
+            pass
+        else:
+            # Shift var_MONTH_PY in the previous year
+            df[var + '_MONTH_PY_SHIFTED'] = df.groupby(
+                'ID')[var + '_MONTH_PY'].shift(-1)
+            # Use var_MONTH_SY where both agree
+            df.loc[df[var + '_MONTH_SY'] == df[var + '_MONTH_PY_SHIFTED'],
+                   var + '_MONTH'] = df[var + '_MONTH_SY']
+            # Use var_MONTH_PY_SHIFTED where var_MONTH_SY is NaN
+            df.loc[df[var + '_MONTH_SY'].isnull() &
+                   df[var + '_MONTH_PY_SHIFTED'].notnull(),
+                   var + '_MONTH'] = df[var + '_MONTH_PY_SHIFTED']
+            # Use var_MONTH_SY where var_MONTH_PY_SHIFTED is NaN or they
+            # disagree because the PY could be more error prone to memory loss
+            df.loc[df[var + '_MONTH_SY'].notnull() &
+                   df[var + '_MONTH_PY_SHIFTED'].isnull(),
+                   var + '_MONTH'] = df[var + '_MONTH_SY']
+            df.loc[df[var + '_MONTH_SY'] != df[var + '_MONTH_PY_SHIFTED'],
+                   var + '_MONTH'] = df[var + '_MONTH_SY']
+            # Make var_MONTH a categorical
+            df[var + '_MONTH'] = df[var + '_MONTH'].astype('category')
+            df[var + '_MONTH'].cat.set_categories(MONTH_DICT.values(),
+                                                  ordered=True, inplace=True)
 
         # Create variable whether var was before the interview to determine
         # timing. Note that, cases where the months of the event and interview
         # coincide are flagged as False.
         df.loc[df[var + '_MONTH'].notnull(),
                var + '_BEFORE_INTERVIEW'] = df[var + '_MONTH'] < df.INT_MONTH
+
+        # There are some cases in which interview and var coincide. An event
+        # happened before the interview if MOTHER_PREGNANT_AT_PQ_YEAR is the
+        # same as the survey year.
+        if var in ['CHILD_DISORDER', 'PREGNANCY_UNPLANNED']:
+            df.loc[(df.INT_MONTH == df[var + '_MONTH']) &
+                   df.MOTHER_PREGNANT_AT_PQ_YEAR.notnull() &
+                   (df.YEAR == df.MOTHER_PREGNANT_AT_PQ_YEAR),
+                   var + '_BEFORE_INTERVIEW'] = True
         # There are some cases in which interview and var coincide. An event
         # happened before the interview if var_MONTH_SY is not NaN. The
         # opposite case if var_MONTH_SY is NaN is already flagged as false due
         # to the previous step
-        df.loc[(df[var + '_MONTH'] == df.INT_MONTH) &
-               df[var + '_MONTH_SY'].notnull(),
-               var + '_BEFORE_INTERVIEW'] = True
+        else:
+            df.loc[(df[var + '_MONTH'] == df.INT_MONTH) &
+                   df[var + '_MONTH_SY'].notnull(),
+                   var + '_BEFORE_INTERVIEW'] = True
 
     # Save for exploration
-    df.to_pickle(ppj('OUT_DATA', 'panel_inspection.pkl'))
+    df.to_pickle(ppj('OUT_DATA', 'panel_inspection_2.pkl'))
     # Separate the sample in the two periods, 2005-2010 and 2010-2015. We
     # cannot simply use years from 2010-2015 for the second period, because
     # there would exist overhanging observations which have only a complete
@@ -369,21 +502,56 @@ def clean_event_variables(df):
             df['EVENT_' + var + '_COUNT_PREVIOUS'] = (
                 df['EVENT_' + var + '_COUNT'] - 1).clip(lower=0)
 
+    # Now, we want to calculate the monthly difference of an event to the next
+    # LOC interview in 2010 or 2015. First, we need to assign the month of the
+    # next LOC interview to each observation by extracting the interview month
+    # in 2010, 2015 and merging the series by IDs.
+    int_month_2010 = df_2005_2010.loc[
+        df_2005_2010.YEAR == 2010, ['ID', 'INT_MONTH']].copy()
+    int_month_2015 = df_2010_2015.loc[
+        df_2010_2015.YEAR == 2015, ['ID', 'INT_MONTH']].copy()
+
+    df_2005_2010 = df_2005_2010.merge(int_month_2010, how='left', on='ID',
+                                      suffixes=('', '_2010'))
+    df_2010_2015 = df_2010_2015.merge(int_month_2015, how='left', on='ID',
+                                      suffixes=('', '_2015'))
+    # Calculate time difference for each event to the next interview month in
+    # 2010 or 2015 and assign values to EVENT_var_TIME_DIFF
+    for var in EVENT_VARIABLES:
+        df_2005_2010['EVENT_' + var + '_TIME_DIFF'] = df_2005_2010.apply(
+            calculate_time_difference_between_event_int, args=(var, 2010),
+            axis=1)
+        df_2010_2015['EVENT_' + var + '_TIME_DIFF'] = df_2010_2015.apply(
+            calculate_time_difference_between_event_int, args=(var, 2015),
+            axis=1)
+        # At last, we propagate previous values to the next period if there is
+        # a NaN. This means that the last value of EVENT_var_TIME_DIFF per ID
+        # in 2010 or 2015 contains the time difference in months to the last
+        # event. I do not know how to handle multiple durations. All other NaNs
+        # will be filled with 0.
+        df_2005_2010['EVENT_' + var + '_TIME_DIFF'] = (
+            df_2005_2010['EVENT_' + var + '_TIME_DIFF'].fillna(
+                method='ffill').fillna(0))
+        df_2010_2015['EVENT_' + var + '_TIME_DIFF'] = (
+            df_2010_2015['EVENT_' + var + '_TIME_DIFF'].fillna(
+                method='ffill').fillna(0))
+
     # Sort dataframes
     df_2005_2010.sort_values(['ID', 'YEAR'], axis='rows', inplace=True)
     df_2010_2015.sort_values(['ID', 'YEAR'], axis='rows', inplace=True)
-    # Get last row of each ID
-    df_2005_2010 = df_2005_2010.groupby('ID', as_index=False).last()
-    df_2010_2015 = df_2010_2015.groupby('ID', as_index=False).last()
     # Save datasets for inspection
     df_2005_2010.to_pickle(ppj('OUT_DATA', 'panel_2005_2010_inspection.pkl'))
     df_2010_2015.to_pickle(ppj('OUT_DATA', 'panel_2010_2015_inspection.pkl'))
-    # Merge two periods
-    df_merged = df_2005_2010.append(df_2010_2015)
+    # Get last row of each ID
+    df_2005_2010 = df_2005_2010.groupby('ID', as_index=False).last()
+    df_2010_2015 = df_2010_2015.groupby('ID', as_index=False).last()
+    # Append two periods
+    df_appended = df_2005_2010.append(df_2010_2015)
 
-    return df_merged
+    return df_appended
 
 
+@report_shape_of_dataframe
 def drop_unused_columns_and_observations(df):
     # Drop columns
     unused_columns = []
@@ -393,16 +561,22 @@ def drop_unused_columns_and_observations(df):
     unused_columns += [i for i in df if 'PY' in i]
     unused_columns += [i for i in df if '_MONTH' in i]
     unused_columns += [i for i in df if 'BEFORE_INTERVIEW' in i]
-    unused_columns += ['REASON_JOB_TERMINATED',
-                       'LEGALLY_HANDICAPPED_PERC_CHANGE']
+    # unused_columns += ['REASON_JOB_TERMINATED',
+    #                    'LEGALLY_HANDICAPPED_PERC_CHANGE']
     unused_columns += ['EVENT_' + i for i in EVENT_VARIABLES]
+    unused_columns += ['ID_MOTHER', 'MOTHER_PREGNANT_AT_PQ_YEAR']
+    unused_columns += ['EDUCATION_GROUPS_CASMIN', 'EDUCATION_GROUPS_ISCED11',
+                       'YEARS_EDUCATION']
     df.drop(unused_columns, axis='columns', inplace=True)
+    # Drop all 25 observations with NaNs in EDUCATION_GROUPS_ISCED97
+    df = df.loc[df.EDUCATION_GROUPS_ISCED97.notnull()]
     # Create dummies for events
     for i in EVENT_VARIABLES:
         df['EVENT_' + i] = (df['EVENT_' + i + '_COUNT'] != 0)
     # Restore dtypes after groupby.Groupby.last() operation
     df.GENDER = df.GENDER.astype('category')
     df.MARITAL_STATUS = df.MARITAL_STATUS.astype('category')
+    df.EMPLOYMENT_STATUS = df.EMPLOYMENT_STATUS.astype('category')
     # Sort values
     df.sort_values(['ID', 'YEAR'], axis='rows', inplace=True)
 
@@ -414,11 +588,21 @@ if __name__ == '__main__':
     df = create_panel()
     # Clean common variables
     df = clean_common_variables(df)
+    # Merge with ``edu_groups.pkl``
+    df = merge_with_edu_groups(df)
+    # Merge with ``edu_years``
+    df = merge_with_edu_years(df)
+    # Merge with ``migration.pkl``
+    df = merge_with_migration(df)
     # Extract LOC for separate processing
     df = extract_loc(df)
+    # Save dataframe for inspection
+    df.to_pickle(ppj('OUT_DATA', 'panel_inspection_1.pkl'))
+    # Merge with ``preg.pkl`` and ``dis.pkl``
+    df = merge_with_preg_dis(df)
     # Clean event variables
     df = clean_event_variables(df)
     # Clean event data
     df = drop_unused_columns_and_observations(df)
     # Save the current dataframe
-    df.to_pickle(ppj('OUT_DATA', f'panel.pkl'))
+    df.to_pickle(ppj('OUT_DATA', 'panel.pkl'))

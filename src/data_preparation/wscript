@@ -5,13 +5,54 @@ def build(ctx):
 
     ctx(
         features='run_py_script',
+        source='create_edu_groups.py',
+        deps=ctx.path_to(ctx, 'IN_DATA', 'pequiv.dta'),
+        target=ctx.path_to(ctx, 'OUT_DATA', 'edu_groups.pkl'),
+        name='create_edu_groups'
+    )
+
+    ctx(
+        features='run_py_script',
+        source='create_edu_years.py',
+        deps=ctx.path_to(ctx, 'IN_DATA', 'pequiv.dta'),
+        target=ctx.path_to(ctx, 'OUT_DATA', 'edu_years.pkl'),
+        name='create_edu_years'
+    )
+
+    ctx(
+        features='run_py_script',
+        source='create_migration.py',
+        deps=ctx.path_to(ctx, 'IN_DATA', 'ppfad.dta'),
+        target=ctx.path_to(ctx, 'OUT_DATA', 'migration.pkl'),
+        name='create_migration'
+    )
+
+    ctx(
+        features='run_py_script',
+        source='create_preg_dis.py',
+        deps=ctx.path_to(ctx, 'IN_DATA', 'bioagel.dta'),
+        target=[
+            ctx.path_to(ctx, 'OUT_DATA', 'preg.pkl'),
+            ctx.path_to(ctx, 'OUT_DATA', 'dis.pkl'),
+        ],
+        name='create_preg_dis'
+    )
+
+    ctx(
+        features='run_py_script',
         source='create_panel.py',
         deps=[
             ctx.path_to(ctx, 'IN_DATA', 'pl.dta'),
             ctx.path_to(ctx, 'IN_DATA', 'pgen.dta'),
+            ctx.path_to(ctx, 'OUT_DATA', 'edu_groups.pkl'),
+            ctx.path_to(ctx, 'OUT_DATA', 'edu_years.pkl'),
+            ctx.path_to(ctx, 'OUT_DATA', 'migration.pkl'),
+            ctx.path_to(ctx, 'OUT_DATA', 'preg.pkl'),
+            ctx.path_to(ctx, 'OUT_DATA', 'dis.pkl'),
         ],
         target=[
-            ctx.path_to(ctx, 'OUT_DATA', 'panel_inspection.pkl'),
+            ctx.path_to(ctx, 'OUT_DATA', 'panel_inspection_1.pkl'),
+            ctx.path_to(ctx, 'OUT_DATA', 'panel_inspection_2.pkl'),
             ctx.path_to(ctx, 'OUT_DATA', 'panel_2005_2010_inspection.pkl'),
             ctx.path_to(ctx, 'OUT_DATA', 'panel_2010_2015_inspection.pkl'),
             ctx.path_to(ctx, 'OUT_DATA', 'panel.pkl'),
