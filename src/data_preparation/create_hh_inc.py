@@ -25,6 +25,8 @@ def main():
     df = df.rename(columns=VARIABLE_NAMES_HGEN)
     # Cast negative values to NaNs
     df.loc[df.HH_NET_INCOME_MONTHLY < 0, 'HH_NET_INCOME_MONTHLY'] = np.nan
+    # Drop NaNs
+    df.dropna(subset=['HH_NET_INCOME_MONTHLY'], axis='rows', inplace=True)
     # Convert to yearly income
     df.HH_NET_INCOME_MONTHLY = df.HH_NET_INCOME_MONTHLY * 12
     # Rename column

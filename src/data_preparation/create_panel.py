@@ -16,6 +16,7 @@ from dateutil.relativedelta import relativedelta
 EVENT_VARIABLES = ['CHILD_DISORDER', 'DEATH_CHILD', 'DEATH_FATHER',
                    'DEATH_HH_PERSON', 'DEATH_MOTHER', 'DEATH_PARTNER',
                    'DIVORCED', 'HH_COMP_CHANGE', 'LAST_JOB_ENDED',
+                   'LEGALLY_HANDICAPPED_PERC',
                    'PREGNANCY_UNPLANNED', 'SEPARATED']
 
 NAN_IDENTIFIERS = [
@@ -107,7 +108,6 @@ MONTH_TO_NUMBER.pop('')
 def calculate_time_difference_between_event_int(
         x, event, end_year_interview):
     try:
-        x[event + '_MONTH']
         start_month = x[event + '_MONTH']
         start_year = x.YEAR
         end_month = x[f'INT_MONTH_{end_year_interview}']
@@ -203,13 +203,13 @@ def create_panel():
     # Merge with df
     df = df.merge(pgen, on=['ID', 'YEAR'], how='left')
 
-    # Post-merging procesing
+    # Post-merging processing
     # Clean categoricals
     df = clean_categoricals_from_multiple_nans(df, NAN_IDENTIFIERS)
     # Relabel data containing months and make them comparable
     df = reorder_month_categoricals(df)
 
-    # Dropping observations which have NaNs in their loc elicitations in 2005,
+    # Dropping observations which have NaNs in their LoC elicitations in 2005,
     # 2010 or 2015
     df = df.loc[
         (df[[i for i in df if 'LOC' in i]].isnull().any(axis=1) &
@@ -294,6 +294,15 @@ def clean_common_variables(df):
     # Calculate change in LEGALLY_HANDICAPPED_PERC
     df['LEGALLY_HANDICAPPED_PERC_CHANGE'] = (
         df.LEGALLY_HANDICAPPED_PERC - df.LEGALLY_HANDICAPPED_PERC_SHIFTED)
+    # Create LEGALLY_HANDICAPPED_PERC_MONTH where 100 is replaced with the
+    # interview month in lack of a better time estimate. There is no monthly
+    # information for disability changes.
+    df.loc[df.LEGALLY_HANDICAPPED_PERC_CHANGE == 100,
+           'LEGALLY_HANDICAPPED_PERC_MONTH'] = df.INT_MONTH
+    df.LEGALLY_HANDICAPPED_PERC_MONTH = (
+        df.LEGALLY_HANDICAPPED_PERC_MONTH.astype('category'))
+    df.LEGALLY_HANDICAPPED_PERC_MONTH.cat.set_categories(
+        MONTH_DICT.values(), ordered=True, inplace=True)
     # Drop unneccessary columns
     df.drop(['LEGALLY_HANDICAPPED_PERC', 'LEGALLY_HANDICAPPED_PERC_SHIFTED'],
             axis='columns', inplace=True)
@@ -422,7 +431,8 @@ def clean_event_variables(df):
     for var in EVENT_VARIABLES:
         # These variables already have one column containing months and do not
         # need to be reduced.
-        if var in ['CHILD_DISORDER', 'PREGNANCY_UNPLANNED']:
+        if var in ['CHILD_DISORDER', 'PREGNANCY_UNPLANNED',
+                   'LEGALLY_HANDICAPPED_PERC']:
             pass
         else:
             # Shift var_MONTH_PY in the previous year
@@ -461,6 +471,9 @@ def clean_event_variables(df):
                    df.MOTHER_PREGNANT_AT_PQ_YEAR.notnull() &
                    (df.YEAR == df.MOTHER_PREGNANT_AT_PQ_YEAR),
                    var + '_BEFORE_INTERVIEW'] = True
+        # This variables do not need to be adjusted.
+        elif var in ['LEGALLY_HANDICAPPED_PERC']:
+            pass
         # There are some cases in which interview and var coincide. An event
         # happened before the interview if var_MONTH_SY is not NaN. The
         # opposite case if var_MONTH_SY is NaN is already flagged as false due
@@ -500,30 +513,29 @@ def clean_event_variables(df):
                          (df_2010_2015[var + '_BEFORE_INTERVIEW'] == 0),
                          var + '_MONTH'] = np.nan
 
-    # Preuss, Hennecke (2017) delete every observation with more than three
-    # job losses between two LOC interviews. We need to save the current count
-    # of displacements.
-    df_2005_2010['LAST_JOB_ENDED_COUNT_FULL'] = df_2005_2010.groupby(
-        'ID').LAST_JOB_ENDED_MONTH.transform('count')
-    df_2010_2015['LAST_JOB_ENDED_COUNT_FULL'] = df_2010_2015.groupby(
-        'ID').LAST_JOB_ENDED_MONTH.transform('count')
-    # As PH (2017), we only focus on displacement by employer and plant
+    # When looking at LAST_JOB_ENDED, we are using two specification. In the
+    # first, we consider every kind of job loss. In the second step and as
+    # Preuss, Hennecke (2017), we focus on displacement by employer and plant
     # closure. Therefore, we will delete every other instances of job loss from
-    # LAST_JOB_ENDED_MONTH. As all categories are eliminated from
+    # LAST_JOB_ENDED_LIMITED_MONTH. As all categories are eliminated from
     # REASON_JOB_TERMINATED which are not valid by the considerations of
     # Preuss, Hennecke (2017), we can eliminate all job losses where
     # REASON_JOB_TERMINATED and REASON_JOB_TERMINATED_SHIFTED are NaN.
+    df_2005_2010['LAST_JOB_ENDED_LIMITED_MONTH'] = (
+        df_2005_2010.LAST_JOB_ENDED_MONTH)
     df_2005_2010.loc[df_2005_2010.REASON_JOB_TERMINATED.isnull() &
                      df_2005_2010.REASON_JOB_TERMINATED_SHIFTED.isnull(),
-                     'LAST_JOB_ENDED_MONTH'] = np.nan
+                     'LAST_JOB_ENDED_LIMITED_MONTH'] = np.nan
+    df_2010_2015['LAST_JOB_ENDED_LIMITED_MONTH'] = (
+        df_2010_2015.LAST_JOB_ENDED_MONTH)
     df_2010_2015.loc[df_2010_2015.REASON_JOB_TERMINATED.isnull() &
                      df_2010_2015.REASON_JOB_TERMINATED_SHIFTED.isnull(),
-                     'LAST_JOB_ENDED_MONTH'] = np.nan
+                     'LAST_JOB_ENDED_LIMITED_MONTH'] = np.nan
 
     # Create event identifiers, ongoing counts of current events and ongoing
     # counts of previous events.
     for df in [df_2005_2010, df_2010_2015]:
-        for var in EVENT_VARIABLES:
+        for var in EVENT_VARIABLES + ['LAST_JOB_ENDED_LIMITED']:
             # Create event identifier
             df.loc[df[var + '_MONTH'].notnull(), 'EVENT_' + var] = True
             # Create ongoing count of events per period
@@ -607,7 +619,7 @@ def drop_unused_columns_and_observations(df):
     # Drop all 25 observations with NaNs in EDUCATION_GROUPS_ISCED97
     df.dropna(subset=['EDUCATION_GROUPS_ISCED97'], axis='rows', inplace=True)
     # Drop 297 observations with NaNs in HH_NET_INCOME_MONTHLY
-    df.dropna(subset=['HH_NET_INCOME_MONTHLY'], axis='rows', inplace=True)
+    df.dropna(subset=['HH_NET_INCOME_YEAR'], axis='rows', inplace=True)
     # Create dummies for events
     for i in EVENT_VARIABLES:
         df['EVENT_' + i] = (df['EVENT_' + i + '_COUNT'] != 0)
