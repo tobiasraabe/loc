@@ -40,7 +40,7 @@ MONTH_DICT = OrderedDict([('[1] Januar', 'January'),
 
 VARIABLE_DICT_PL = {
     # General variables
-    'cid': 'ID_ORIGINAL_HH',  # Case id, id of original household
+    # 'cid': 'ID_ORIGINAL_HH',  # Case id, id of original household
     'syear': 'YEAR',  # survey year
     'hid': 'ID_HH',  # current household id
     'pid': 'ID',  # permanent personal id
@@ -363,6 +363,17 @@ def merge_with_edu_years(df):
 
 @report_shape_of_dataframe
 @assert_same_number_of_observations
+def merge_with_hh_inc(df):
+    # Load dataset
+    hh_inc = pd.read_pickle(ppj('OUT_DATA', 'hh_inc.pkl'))
+    # Merge with panel
+    df = df.merge(hh_inc, on=['ID_HH', 'YEAR'], how='left')
+
+    return df
+
+
+@report_shape_of_dataframe
+@assert_same_number_of_observations
 def merge_with_migration(df):
     # Load dataset
     mig = pd.read_pickle(ppj('OUT_DATA', 'migration.pkl'))
@@ -580,12 +591,11 @@ def clean_event_variables(df):
 def drop_unused_columns_and_observations(df):
     # Drop columns
     unused_columns = []
-    unused_columns += ['ID_ORIGINAL_HH']
     unused_columns += ['YEAR_2005_2010', 'YEAR_2005_2010_SUM',
                        'YEAR_2010_2015', 'YEAR_2010_2015_SUM']
     unused_columns += [i for i in df if 'SY' in i]
     unused_columns += [i for i in df if 'PY' in i]
-    unused_columns += [i for i in df if '_MONTH' in i]
+    unused_columns += [i + '_MONTH' for i in EVENT_VARIABLES]
     unused_columns += [i for i in df if 'BEFORE_INTERVIEW' in i]
     unused_columns += ['REASON_JOB_TERMINATED',
                        'REASON_JOB_TERMINATED_SHIFTED']
@@ -596,6 +606,8 @@ def drop_unused_columns_and_observations(df):
     df.drop(unused_columns, axis='columns', inplace=True)
     # Drop all 25 observations with NaNs in EDUCATION_GROUPS_ISCED97
     df.dropna(subset=['EDUCATION_GROUPS_ISCED97'], axis='rows', inplace=True)
+    # Drop 297 observations with NaNs in HH_NET_INCOME_MONTHLY
+    df.dropna(subset=['HH_NET_INCOME_MONTHLY'], axis='rows', inplace=True)
     # Create dummies for events
     for i in EVENT_VARIABLES:
         df['EVENT_' + i] = (df['EVENT_' + i + '_COUNT'] != 0)
@@ -616,8 +628,10 @@ if __name__ == '__main__':
     df = clean_common_variables(df)
     # Merge with ``edu_groups.pkl``
     df = merge_with_edu_groups(df)
-    # Merge with ``edu_years``
+    # Merge with ``edu_years.pkl``
     df = merge_with_edu_years(df)
+    # Merge with ``hh_inc.pkl``
+    df = merge_with_hh_inc(df)
     # Merge with ``migration.pkl``
     df = merge_with_migration(df)
     # Extract LOC for separate processing

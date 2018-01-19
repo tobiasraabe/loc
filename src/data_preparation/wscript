@@ -5,6 +5,14 @@ def build(ctx):
 
     ctx(
         features='run_py_script',
+        source='create_hh_inc.py',
+        deps=ctx.path_to(ctx, 'IN_DATA', 'hgen.dta'),
+        target=ctx.path_to(ctx, 'OUT_DATA', 'hh_inc.pkl'),
+        name='create_hh_inc'
+    )
+
+    ctx(
+        features='run_py_script',
         source='create_edu_groups.py',
         deps=ctx.path_to(ctx, 'IN_DATA', 'pequiv.dta'),
         target=ctx.path_to(ctx, 'OUT_DATA', 'edu_groups.pkl'),
@@ -46,6 +54,7 @@ def build(ctx):
             ctx.path_to(ctx, 'IN_DATA', 'pgen.dta'),
             ctx.path_to(ctx, 'OUT_DATA', 'edu_groups.pkl'),
             ctx.path_to(ctx, 'OUT_DATA', 'edu_years.pkl'),
+            ctx.path_to(ctx, 'OUT_DATA', 'hh_inc.pkl'),
             ctx.path_to(ctx, 'OUT_DATA', 'migration.pkl'),
             ctx.path_to(ctx, 'OUT_DATA', 'preg.pkl'),
             ctx.path_to(ctx, 'OUT_DATA', 'dis.pkl'),

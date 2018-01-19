@@ -1,34 +1,64 @@
-\documentclass[12pt,a4paper,fleqn]{article}
-\usepackage[english]{babel}
-%\usepackage[utf8]{inputenc}
-\usepackage{ae} % falls in acrobat reader nicht schön dargestellt werden kann
-\usepackage{amsmath} % für mathematische symbole
-\usepackage{amsfonts}
-\usepackage{amssymb}
-\usepackage{graphicx}
-\usepackage{tabularx}
-\usepackage[left=3.0cm,top=2.0cm,right=2.0cm,bottom=2.0cm]{geometry}
-\usepackage{filecontents}
-\usepackage{setspace}
-\usepackage{booktabs}
-\usepackage{multicol}
-\usepackage{appendix}
-\usepackage{subfigure}
-\usepackage{supertabular}
-\usepackage{caption} 
-\usepackage{array, multirow}
-\usepackage{lscape}
-\usepackage{fixltx2e}
-\usepackage[scaled]{uarial}
-\usepackage{placeins} %Fuer den FloatBarrier Befehl
-\usepackage[latin1]{inputenc}
-\usepackage{diagbox}
-\renewcommand{\baselinestretch}{1.44} % entspricht 1,5-fachem Zeilenabstand in Microsoft Word
-\usepackage{natbib} % Usepackage fuer Bibliographie
-\bibliographystyle{apalike} % Usepackage fuer Bibliographie
-\renewcommand{\footnotesize}{\scriptsize}
+\documentclass[12pt, a4paper, fleqn, parskip]{scrartcl}
+\def\datum{\today}
+\author{Tobias Raabe and Imke Strampe}
+\title{Malleability of Locus of Control by Traumatic Events}
 
-\pagenumbering{roman} 
+\usepackage[english]{babel}  % set language to adjust headings, automatic hypenation
+\usepackage[utf8]{inputenc}  % allows to use umlauts and certain symbols
+\usepackage[T1]{fontenc}  % typesetting, necessary for umlauts and accentuations
+\usepackage{lmodern}  % Latin Modern Fonts are successors of standard fonts
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage[space]{grffile}
+\usepackage{hyperref}
+\usepackage{setspace}
+\usepackage{xcolor}
+\hypersetup{
+    colorlinks,
+    linkcolor={red!50!black},
+    citecolor={blue!50!black},
+    urlcolor={blue!80!black}
+}
+
+\usepackage[backend=biber, natbib=true, bibencoding=utf8, safeinputenc=true,
+bibstyle=authoryear, citestyle=authoryear-comp, maxcitenames=2, mincitenames=1,
+uniquelist=false, useprefix=true, maxbibnames=99, minbibnames=99, backref=true,
+backrefstyle=three, doi=true, isbn=false, sortcites=false, dashed=false,
+firstinits=true]{biblatex}
+
+\addbibresource{references.bib}
+
+% \documentclass[12pt,a4paper,fleqn]{article}
+% \usepackage[english]{babel}
+% %\usepackage[utf8]{inputenc}
+% \usepackage{ae} % falls in acrobat reader nicht schön dargestellt werden kann
+% \usepackage{amsmath} % für mathematische symbole
+% \usepackage{amsfonts}
+% \usepackage{amssymb}
+% \usepackage{graphicx}
+% \usepackage{tabularx}
+% \usepackage[left=3.0cm,top=2.0cm,right=2.0cm,bottom=2.0cm]{geometry}
+% \usepackage{filecontents}
+% \usepackage{booktabs}
+% \usepackage{multicol}
+% \usepackage{appendix}
+% \usepackage{subfigure}
+% \usepackage{supertabular}
+% \usepackage{caption}
+% \usepackage{array, multirow}
+% \usepackage{lscape}
+% \usepackage{fixltx2e}
+% \usepackage[scaled]{uarial}
+% \usepackage{placeins} %Fuer den FloatBarrier Befehl
+% \usepackage[latin1]{inputenc}
+% \usepackage{diagbox}
+% \renewcommand{\baselinestretch}{1.44} % entspricht 1,5-fachem Zeilenabstand in Microsoft Word
+% \usepackage{natbib} % Usepackage fuer Bibliographie
+% \bibliographystyle{apalike} % Usepackage fuer Bibliographie
+% \renewcommand{\footnotesize}{\scriptsize}
+
+\pagenumbering{roman}
 \begin{document}
 	\begin{titlepage}
 		\begin{center}
@@ -49,28 +79,86 @@
 
 \pagebreak
 
-\listoffigures  \addcontentsline{}{Abbildungsverzeichnis} \clearpage 
-\listoftables  \addcontentsline{}{Tabellenverzeichnisverzeichnis} \clearpage 
+\listoffigures  \addcontentsline{}{List of Figures} \clearpage
+\listoftables  \addcontentsline{}{List of Tables} \clearpage
 
 \pagebreak
 
 \pagenumbering{arabic}
 
 \section{Introduction}
-Character traits, cognitive and non-cognitive abilities have been increasingly embedded in economic models during the last one or two decades. In this paper we focus on one specific personality trait, the locus of control, which goes back to the work of Rotter (1966). The locus of control refers to the causality between an individual's behaviour and its consequences. Individuals with a rather internal locus of control think that they can entirely influence the outcome of their behaviour and actions whereas individuals with a more external locus of control are of the opinion that fate or luck mainly determine what happens to them in life.
-The locus of control is especially relevant in economic applications as it is a major determinant of a wide range of life outcomes. \\
-According to Heineck and Anger (2010), having a more internal locus of control is associated with higher wages. Piatek and Pinger (2010) discover that education is the main channel for this phenomenon as individuals with an internal locus of control invest more in education. Gallo et al. (2013) find that unemployment durations following a job loss are also lower for these people. Besides, Cobb-Clark et al. (2014) observe that individuals with an internal locus of control are more likely to eat healthier and exercise regularly. Another benefit of having an internal locus of control is found by Buddelmeyer, Powdthavee (2016) who discover that an internal locus of control increases the individual's psychological resilience against certain negative shocks. 
-In the literature, adults' locus of control is often regarded as being stable or even fixed over time (see for example Heineck, Anger (2010), Semykina, Linz (2007)). By treating it as exogenous, reverse causality problems are overcome as it is assumed not to be influenced by any labour market outcomes. This assumption is convenient if the locus of control is measured only once in the data, but the results are likely to be biased if the locus of control is indeed not stable over the relevant time frame. For an elaborate explanation of the econometric issues that can arise, see Cobb-Clark, Schurer (2013). \\
-In this study, we want to challenge this assumption by investigating whether an individual's locus of control changes after he or she has experienced an exogenously caused traumatic event (e.g. the death of a family member). \\
-This study is in line with the early work of Alesina, Ferrara (2002) who look at changes in trust due to traumatic events. An extension of the framework to locus of control was done by Cobb-Clark, Schurer (2013) using Australian data (HILDA survey) who find that positive and negative life events have only a minor and empirically irrelevant  influence on the locus of control. 
-Preuss, Hennecke (2017) give a brief overview of the studies focusing on the relationship between unemployment and locus of control. Using the GSOEP, Preuss, Hennecke (2017) provide evidence with greater external validity. By differentiating between stated locus of control, which is context-specific, and actual locus of control, they do not reject the stability assumption of actual locus of control. This is due to the fact that they observe a change in the stated locus of control during unemployment which vanishes after reemployment. \\
-Instead of focusing only on unemployment, we look at traumatas concerning three categories of life - the health, the social and the economic environment.  For this purpose, we make use of the German Socio-Economic Panel (SOEP, 2016) and run three different regression specifications. By using a differences-in-differences approach, we expect all of the traumatic events to lead to a shift towards a more external locus of control.\\
-The outline of the paper is as follows. Section 2 describes the data and analyses possible causal channels of locus of control. Section 3 explains the estimation strategy and section 4 presents the result. We conclude with section 6. 
+Character traits, cognitive and non-cognitive abilities have been increasingly
+embedded in economic models during the last one or two decades. In this paper
+we focus on one specific personality trait, the locus of control, which goes
+back to the work of Rotter (1966). The locus of control refers to the causality
+between an individual's behaviour and its consequences. Individuals with a
+rather internal locus of control think that they can entirely influence the
+outcome of their behaviour and actions whereas individuals with a more external
+locus of control are of the opinion that fate or luck mainly determine what
+happens to them in life. The locus of control is especially relevant in
+economic applications as it is a major determinant of a wide range of life
+outcomes.
+
+According to Heineck and Anger (2010), having a more internal locus of control
+is associated with higher wages. Piatek and Pinger (2010) discover that
+education is the main channel for this phenomenon as individuals with an
+internal locus of control invest more in education. Gallo et al. (2013) find
+that unemployment durations following a job loss are also lower for these
+people. Besides, Cobb-Clark et al. (2014) observe that individuals with an
+internal locus of control are more likely to eat healthier and exercise
+regularly. Another benefit of having an internal locus of control is found by
+Buddelmeyer, Powdthavee (2016) who discover that an internal locus of control
+increases the individual's psychological resilience against certain negative
+shocks. In the literature, adults' locus of control is often regarded as being
+stable or even fixed over time (see for example Heineck, Anger (2010),
+Semykina, Linz (2007)). By treating it as exogenous, reverse causality problems
+are overcome as it is assumed not to be influenced by any labour market
+outcomes. This assumption is convenient if the locus of control is measured
+only once in the data, but the results are likely to be biased if the locus of
+control is indeed not stable over the relevant time frame. For an elaborate
+explanation of the econometric issues that can arise, see Cobb-Clark, Schurer
+(2013).
+
+In this study, we want to challenge this assumption by investigating whether an
+individual's locus of control changes after he or she has experienced an
+exogenously caused traumatic event (e.g. the death of a family member).
+
+This study is in line with the early work of Alesina, Ferrara (2002) who look
+at changes in trust due to traumatic events. An extension of the framework to
+locus of control was done by Cobb-Clark, Schurer (2013) using Australian data
+(HILDA survey) who find that positive and negative life events have only a
+minor and empirically irrelevant  influence on the locus of control. Preuss,
+Hennecke (2017) give a brief overview of the studies focusing on the
+relationship between unemployment and locus of control. Using the GSOEP,
+Preuss, Hennecke (2017) provide evidence with greater external validity. By
+differentiating between stated locus of control, which is context-specific, and
+actual locus of control, they do not reject the stability assumption of actual
+locus of control. This is due to the fact that they observe a change in the
+stated locus of control during unemployment which vanishes after reemployment.
+
+Instead of focusing only on unemployment, we look at traumatas concerning three
+categories of life - the health, the social and the economic environment.  For
+this purpose, we make use of the German Socio-Economic Panel (SOEP, 2016) and
+run three different regression specifications. By using a differences-in-
+differences approach, we expect all of the traumatic events to lead to a shift
+towards a more external locus of control.
+
+The outline of the paper is as follows. Section 2 describes the data and
+analyses possible causal channels of locus of control. Section 3 explains the
+estimation strategy and section 4 presents the result. We conclude with section
+6.
 
 \section{Data}
-Our data comes from the German Socio-Economic Panel (SOEP) which is an annual representative household panel study. It focuses on all participants from 2005-2015 which is about 16,000 households or 30,000 people. \\
-Our main sample restriction is the elicitation of the locus of control survey questions which are asked every five years from 2005 on. (Additionally, the questions are posed to every teenager turning 17, so we are able to extend our sample with roughly 200 teenagers every year since 2006.)
-In these waves the survey participants have been asked to what extent they agree or disagree with the statements presented in Table 1 (1 = disagree completely; 7 = agree completely).\\
+
+Our data comes from the German Socio-Economic Panel (SOEP) which is an annual
+representative household panel study. It focuses on all participants from
+2005-2015 which is about 16,000 households or 30,000 people.
+
+Our main sample restriction is the elicitation of the locus of control survey
+questions which are asked every five years from 2005 on. In these waves the
+survey participants have been asked to what extent they agree or disagree with
+the statements presented in Table 1 (1 = disagree completely; 7 = agree
+completely).
 
 \begin{table}[h!]
 	\centering
@@ -96,65 +184,115 @@ In these waves the survey participants have been asked to what extent they agree
 	\caption{Source: SOEP 2005, 2010, 2015}
 \end{table}
 
-As Piatek, Pinger (2016) find that using an index to construct a measure of locus of control leads to measurement error and attenuation bias, we conduct a principal component analysis for getting a more valid measure. \\
-..\\
-For the traumatic experiences concerning health, we include a dummy which is one if someone has born a child who has confirmed disorders and which is zero otherwise. On top of that, we use the change in disability of a household member in one specification and a dummy which is one only if the change is from one to hundred percent in another specification. \\
-Traumata relating to the social environment are a divorce dummy, a relationship breakup dummy, an unplanned pregnancy dummy, a dummy for the death of a partner, mother, father, child or a household member.\\
-We also make use of a traumatic experience concerning the economic environment which is a dummy for the loss of a job. \\
-..\\
-\textit{sample restrictions, missing values, how many people suffered from how many traumata} \\
-..\\
-We expect to see a shift towards a more external locus of control after the occurence of each of the traumata. If such an exogenously caused, dreadful incident happens to someone, the person might wonder why he or she was affected. He might feel as a victim, become more doubtful and have the impression that he does not deserve that. Besides, his feeling of having control over what happens to him would shrink. Consequently he would start believing more in fate than in his own ability of mastering everything and the locus of control would shift towards externality. The entire process could happen subconsciously. \\
+As Piatek, Pinger (2016) find that using an index to construct a measure of
+locus of control leads to measurement error and attenuation bias, we conduct a
+principal component analysis for getting a more valid measure.
+
+For the traumatic experiences concerning health, we include a dummy which is
+one if someone has born a child who has confirmed disorders and which is zero
+otherwise. On top of that, we use the change in disability of a household
+member in one specification and a dummy which is one only if the change is from
+one to hundred percent in another specification.
+
+Traumata relating to the social environment are a divorce dummy, a relationship
+breakup dummy, an unplanned pregnancy dummy, a dummy for the death of a
+partner, mother, father, child or a household member.
+
+We also make use of a traumatic experience concerning the economic environment
+which is a dummy for the loss of a job.
+
+\textit{sample restrictions, missing values, how many people suffered from how
+many traumata}
+
+We expect to see a shift towards a more external locus of control after the
+occurrence of each of the traumata. If such an exogenously caused, dreadful
+incident happens to someone, the person might wonder why he or she was
+affected. He might feel as a victim, become more doubtful and have the
+impression that he does not deserve that. Besides, his feeling of having
+control over what happens to him would shrink. Consequently he would start
+believing more in fate than in his own ability of mastering everything and the
+locus of control would shift towards externality. The entire process could
+happen subconsciously.
 
 \section{Estimation Strategy}
-For investigating the impact of traumata on the locus of control, we conduct three specifications, a more general, a more specific one and one
-including just the number of traumata experienced. In all specifications we
-use change in locus of control as a dependent variable and estimate the effect by a differences-in-differences analysis. 
-Regarding the controls, we follow the specifications by Cobb-Clark, Schurer (2013):
-dummies for age groups, marital status, immigrant status, employment status,
-educational qualification dummies and log household income. Furthermore, we
-include a gender dummy and dummies for years into the regression.
+
+For investigating the impact of traumata on the locus of control, we conduct
+three specifications, a more general, a more specific one and one including
+just the number of traumata experienced. In all specifications we use change in
+locus of control as a dependent variable and estimate the effect by a
+differences-in-differences analysis. Regarding the controls, we follow the
+specifications by Cobb-Clark, Schurer (2013): dummies for age groups, marital
+status, immigrant status, employment status, educational qualification dummies
+and log household income. Furthermore, we include a gender dummy and dummies
+for years into the regression.
 
 We would also like to control for the time passed since the last shock to
-identify depreciation effects of traumatic events.\\
-..\\
-\\
-In the first more general specification of our analysis, we include
-the birth of a child who is handicapped and the change in the degree of
-disability of a household member. On top of that, we use the occurence of a divorce, 
-an unplanned pregnancy, a relationship breakup, the death of a partner, father, 
-mother, child or a household member or
-any other family composition change. Besides, the loss of a job would be included in our first specification. \\
+identify depreciation effects of traumatic events.
 
-In our second, more precise specification, we include the change in the degree of disability of a
-household member only in case of a change from 0 to 100\%. Moreover, we drop the occurence
-of a divorce and of a relationship break-up as we suppose
-that the latter incidents are in most cases not exogenous and would therefore
-not necessarily lead to a more external locus of control. Regarding
+In the first more general specification of our analysis, we include the birth
+of a child who is handicapped and the change in the degree of disability of a
+household member. On top of that, we use the occurence of a divorce, an
+unplanned pregnancy, a relationship breakup, the death of a partner, father,
+mother, child or a household member or any other family composition change.
+Besides, the loss of a job would be included in our first specification.
+
+In our second, more precise specification, we include the change in the degree
+of disability of a household member only in case of a change from 0 to 100\%.
+Moreover, we drop the occurence of a divorce and of a relationship break-up as
+we suppose that the latter incidents are in most cases not exogenous and would
+therefore not necessarily lead to a more external locus of control. Regarding
 deaths, we would drop deaths where the person investigated is not strongly
-affected by the loss. On top of that, we include
-only the job losses which are rather exogenous e.g. when the place of work
-closed or the person was dismissed by his or her employer, but not if there was
-e.g. a mutual agreement with the employer or the job was ended due to
-retirement.\\
+affected by the loss. On top of that, we include only the job losses which are
+rather exogenous e.g. when the place of work closed or the person was dismissed
+by his or her employer, but not if there was e.g. a mutual agreement with the
+employer or the job was ended due to retirement.
 
 In order to find out whether the relationship between change in locus of
 control and negative life events varies with the number of negative life events
 reported, we include the total number of traumas in our third specification
-instead of using all the dummies for the different traumatic experiences. Additionally, we
-include the total number squared to test for any non-
+instead of using all the dummies for the different traumatic experiences.
+Additionally, we include the total number squared to test for any non-
 linearities. In this specification, we do not control for the time between the
-occurrences of the traumata and the locus of control measurement.\\
+occurrences of the traumata and the locus of control measurement.
 
-In our first and second specification, we estimate the following equation\\
-$ \Delta LOC \textsubscript{i,t}= \alpha + X \textsubscript{i,t} * \beta + Z \textsubscript{i,t} * \gamma + Y\textsubscript{t} * \delta + \epsilon\textsubscript{i}  $ \\
-where $\alpha$ is the average change in locus of control, $ X\textsubscript{i,t}$ a vector of the traumata dummies, $ Z\textsubscript{i,t}$ a vector in which the control variables are included, $ Y\textsubscript{t}$ comprises the year dummies and $\epsilon\textsubscript{i}$ is the error term. \\
-The vector $\beta$ measures the average treatment effect on the treated which shows how each traumatic experience changes the change in locus of control over time on average. In our first specification, in which the traumata are not necessarily exogenous, $\beta $ is clearly the effect only on the treated as there could be some possible selection. In our second specification, we make sure that all traumata are exogenously caused and therefore there should be no selection in or out of treatment. Consequently, we would expect $\beta$ to measure the average treatment effect without any conditioning.  \\
-In our third specification, the estimated equation is\\
-$ \Delta LOC \textsubscript{i,t}= \alpha + N \textsubscript{i,t} * \beta + N \textsuperscript{2}\textsubscript{i,t} * \eta + Z \textsubscript{i,t} * \gamma + Y\textsubscript{t} * \delta + \epsilon\textsubscript{i}  $ \\
-in which we include the number of traumatic experiences $N \textsubscript{i,t}$ and the number of traumatic experiences squared $N \textsuperscript{2}\textsubscript{i,t}$. \\
-We use clustered standard errors on the individual level to account for correlation between the same individual over time in all three specifications. \\
+In our first and second specification, we estimate the following equation
 
+\begin{align}
+	\Delta LOC \textsubscript{i,t}= \alpha + X \textsubscript{i,t} * \beta + Z
+	\textsubscript{i,t} * \gamma + Y\textsubscript{t} * \delta +
+	\epsilon\textsubscript{i}
+\end{align}
+
+where $\alpha$ is the average change in locus of control, $
+X\textsubscript{i,t}$ a vector of the traumata dummies, $ Z\textsubscript{i,t}$
+a vector in which the control variables are included, $ Y\textsubscript{t}$
+comprises the year dummies and $\epsilon\textsubscript{i}$ is the error term.
+
+The vector $\beta$ measures the average treatment effect on the treated which
+shows how each traumatic experience changes the change in locus of control over
+time on average. In our first specification, in which the traumata are not
+necessarily exogenous, $\beta $ is clearly the effect only on the treated as
+there could be some possible selection. In our second specification, we make
+sure that all traumata are exogenously caused and therefore there should be no
+selection in or out of treatment. Consequently, we would expect $\beta$ to
+measure the average treatment effect without any conditioning.
+
+In our third specification, the estimated equation is
+
+\begin{align}
+	\Delta LOC \textsubscript{i,t}= \alpha + N \textsubscript{i,t} * \beta + N
+	\textsuperscript{2}\textsubscript{i,t} * \eta + Z \textsubscript{i,t} *
+	\gamma + Y\textsubscript{t} * \delta + \epsilon\textsubscript{i}
+\end{align}
+
+in which we include the number of traumatic experiences $N \textsubscript{i,t}$
+and the number of traumatic experiences squared $N
+\textsuperscript{2}\textsubscript{i,t}$.
+
+We use clustered standard errors on the individual level to account for
+correlation between the same individual over time in all three specifications.
+
+\printbibliography
 
 \appendix
 \setcounter{secnumdepth}{0}
@@ -168,13 +306,10 @@ We use clustered standard errors on the individual level to account for correlat
 \section{References}
 
 
-	
-	
+
+
 \pagebreak
 \setcounter{secnumdepth}{0}
 \section{Declaration}
-
-
-
 
 \end{document}
