@@ -16,7 +16,7 @@ from dateutil.relativedelta import relativedelta
 EVENT_VARIABLES = ['CHILD_DISORDER', 'DEATH_CHILD', 'DEATH_FATHER',
                    'DEATH_HH_PERSON', 'DEATH_MOTHER', 'DEATH_PARTNER',
                    'DIVORCED', 'HH_COMP_CHANGE', 'LAST_JOB_ENDED',
-                   'LEGALLY_HANDICAPPED_PERC',
+                   'LAST_JOB_ENDED_LIMITED', 'LEGALLY_HANDICAPPED_PERC',
                    'PREGNANCY_UNPLANNED', 'SEPARATED']
 
 NAN_IDENTIFIERS = [
@@ -432,7 +432,7 @@ def clean_event_variables(df):
         # These variables already have one column containing months and do not
         # need to be reduced.
         if var in ['CHILD_DISORDER', 'PREGNANCY_UNPLANNED',
-                   'LEGALLY_HANDICAPPED_PERC']:
+                   'LEGALLY_HANDICAPPED_PERC', 'LAST_JOB_ENDED_LIMITED']:
             pass
         else:
             # Shift var_MONTH_PY in the previous year
@@ -460,8 +460,12 @@ def clean_event_variables(df):
         # Create variable whether var was before the interview to determine
         # timing. Note that, cases where the months of the event and interview
         # coincide are flagged as False.
-        df.loc[df[var + '_MONTH'].notnull(),
-               var + '_BEFORE_INTERVIEW'] = df[var + '_MONTH'] < df.INT_MONTH
+        if var in ['LAST_JOB_ENDED_LIMITED']:
+            pass
+        else:
+            df.loc[df[var + '_MONTH'].notnull(),
+                   var + '_BEFORE_INTERVIEW'] = (
+                df[var + '_MONTH'] < df.INT_MONTH)
 
         # There are some cases in which interview and var coincide. An event
         # happened before the interview if MOTHER_PREGNANT_AT_PQ_YEAR is the
@@ -472,7 +476,7 @@ def clean_event_variables(df):
                    (df.YEAR == df.MOTHER_PREGNANT_AT_PQ_YEAR),
                    var + '_BEFORE_INTERVIEW'] = True
         # This variables do not need to be adjusted.
-        elif var in ['LEGALLY_HANDICAPPED_PERC']:
+        elif var in ['LEGALLY_HANDICAPPED_PERC', 'LAST_JOB_ENDED_LIMITED']:
             pass
         # There are some cases in which interview and var coincide. An event
         # happened before the interview if var_MONTH_SY is not NaN. The
@@ -496,22 +500,25 @@ def clean_event_variables(df):
 
     # Delete events which are not occurring in the specific periods
     for var in EVENT_VARIABLES:
-        # Delete events before interview in 2005
-        df_2005_2010.loc[(df_2005_2010.YEAR == 2005) &
-                         df_2005_2010[var + '_BEFORE_INTERVIEW'],
-                         var + '_MONTH'] = np.nan
-        # Delete events in the first period after the interview
-        df_2005_2010.loc[(df_2005_2010.YEAR == 2010) &
-                         (df_2005_2010[var + '_BEFORE_INTERVIEW'] == 0),
-                         var + '_MONTH'] = np.nan
-        # Delete events in the second period before the interview
-        df_2010_2015.loc[(df_2010_2015.YEAR == 2010) &
-                         df_2010_2015[var + '_BEFORE_INTERVIEW'],
-                         var + '_MONTH'] = np.nan
-        # Delete events after interview in 2015
-        df_2010_2015.loc[(df_2010_2015.YEAR == 2015) &
-                         (df_2010_2015[var + '_BEFORE_INTERVIEW'] == 0),
-                         var + '_MONTH'] = np.nan
+        if var in ['LAST_JOB_ENDED_LIMITED']:
+            pass
+        else:
+            # Delete events before interview in 2005
+            df_2005_2010.loc[(df_2005_2010.YEAR == 2005) &
+                             df_2005_2010[var + '_BEFORE_INTERVIEW'],
+                             var + '_MONTH'] = np.nan
+            # Delete events in the first period after the interview
+            df_2005_2010.loc[(df_2005_2010.YEAR == 2010) &
+                             (df_2005_2010[var + '_BEFORE_INTERVIEW'] == 0),
+                             var + '_MONTH'] = np.nan
+            # Delete events in the second period before the interview
+            df_2010_2015.loc[(df_2010_2015.YEAR == 2010) &
+                             df_2010_2015[var + '_BEFORE_INTERVIEW'],
+                             var + '_MONTH'] = np.nan
+            # Delete events after interview in 2015
+            df_2010_2015.loc[(df_2010_2015.YEAR == 2015) &
+                             (df_2010_2015[var + '_BEFORE_INTERVIEW'] == 0),
+                             var + '_MONTH'] = np.nan
 
     # When looking at LAST_JOB_ENDED, we are using two specification. In the
     # first, we consider every kind of job loss. In the second step and as
@@ -535,7 +542,7 @@ def clean_event_variables(df):
     # Create event identifiers, ongoing counts of current events and ongoing
     # counts of previous events.
     for df in [df_2005_2010, df_2010_2015]:
-        for var in EVENT_VARIABLES + ['LAST_JOB_ENDED_LIMITED']:
+        for var in EVENT_VARIABLES:
             # Create event identifier
             df.loc[df[var + '_MONTH'].notnull(), 'EVENT_' + var] = True
             # Create ongoing count of events per period
@@ -565,7 +572,7 @@ def clean_event_variables(df):
                                       suffixes=('', '_2015'))
     # Calculate time difference for each event to the next interview month in
     # 2010 or 2015 and assign values to EVENT_var_TIME_DIFF
-    for var in EVENT_VARIABLES:
+    for var in EVENT_VARIABLES + ['LAST_JOB_ENDED_LIMITED']:
         df_2005_2010['EVENT_' + var + '_TIME_DIFF'] = df_2005_2010.apply(
             calculate_time_difference_between_event_int, args=(var, 2010),
             axis=1)
@@ -615,10 +622,11 @@ def drop_unused_columns_and_observations(df):
     unused_columns += ['ID_MOTHER', 'MOTHER_PREGNANT_AT_PQ_YEAR']
     unused_columns += ['EDUCATION_GROUPS_CASMIN', 'EDUCATION_GROUPS_ISCED11',
                        'YEARS_EDUCATION']
+    unused_columns += [i for i in df if 'INT_MONTH' in i]
     df.drop(unused_columns, axis='columns', inplace=True)
     # Drop all 25 observations with NaNs in EDUCATION_GROUPS_ISCED97
     df.dropna(subset=['EDUCATION_GROUPS_ISCED97'], axis='rows', inplace=True)
-    # Drop 297 observations with NaNs in HH_NET_INCOME_MONTHLY
+    # Drop 297 observations with NaNs in HH_NET_INCOME_YEAR
     df.dropna(subset=['HH_NET_INCOME_YEAR'], axis='rows', inplace=True)
     # Create dummies for events
     for i in EVENT_VARIABLES:
@@ -627,6 +635,8 @@ def drop_unused_columns_and_observations(df):
     df.GENDER = df.GENDER.astype('category')
     df.MARITAL_STATUS = df.MARITAL_STATUS.astype('category')
     df.EMPLOYMENT_STATUS = df.EMPLOYMENT_STATUS.astype('category')
+    df.EDUCATION_GROUPS_ISCED97 = df.EDUCATION_GROUPS_ISCED97.astype(
+        'category')
     # Sort values
     df.sort_values(['ID', 'YEAR'], axis='rows', inplace=True)
 
