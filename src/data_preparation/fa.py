@@ -14,20 +14,14 @@ def transformation(data, fa, loc_items):
     """Transform the data with the weights attained by the FactorAnalysis fit
     method on the 2010 data. Append the two created axes to the dataset.
     """
-    data = data.reset_index()
     transformed_data = fa.transform(data[loc_items])
-    data['FIRST_AXIS'] = transformed_data[:, 0]
-    data['SECOND_AXIS'] = transformed_data[:, 1]
+    data['FIRST_FACTOR'] = transformed_data[:, 0]
+    data['SECOND_FACTOR'] = transformed_data[:, 1]
 
     return data
 
 
 def main(df):
-    # # Invert the scale of some items
-    # for item in INVERTED_ITEMS:
-    #     df[item] = df[item].replace(
-    #         [1, 2, 3, 4, 5, 6, 7], [7, 6, 5, 4, 3, 2, 1])
-
     # Separate data for the three different years. copy() is necessary to pass
     # a copy of the df and not only a reference to the original df.
     loc_2005 = df[df.YEAR == 2005].copy()
@@ -63,13 +57,6 @@ def main(df):
     loc_data_2005 = transformation(loc_2005, fa, LOC_PERCEIVED_CONTROL)
     loc_data_2010 = transformation(loc_2010, fa, LOC_PERCEIVED_CONTROL)
     loc_data_2015 = transformation(loc_2015, fa, LOC_PERCEIVED_CONTROL)
-
-    # # Compute correlations between loc items and the two axes.
-    # correlations = np.zeros((10, 2))
-    # for k, l in enumerate(['FIRST_AXIS', 'SECOND_AXIS']):
-    #     for i, j in enumerate(LOC_PERCEIVED_CONTROL):
-    #         correlations[i, k] = loc_data_2010['{}'.format(j)].corr(
-    #             loc_data_2010['{}'.format(l)])
 
     # Merge the three datasets with the two newly created axes.
     frames = [loc_data_2005, loc_data_2010, loc_data_2015]

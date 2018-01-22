@@ -39,6 +39,41 @@ DESCRIPTIVES = {'AGE': 'Age',
                 'Higher education',
                 }
 
+RETAINED_COLUMNS = ['ID', 'YEAR'] + CONTROLS
+RETAINED_COLUMNS += ['EVENT_' + i for i in EVENT_VARIABLES]
+
+
+def prepare_data():
+    # Load data
+    df_2005_2010 = pd.read_pickle(
+        ppj('OUT_DATA', 'panel_2005_2010_inspection.pkl'))
+    df_2005_2010 = df_2005_2010[RETAINED_COLUMNS]
+    df_2010_2015 = pd.read_pickle(
+        ppj('OUT_DATA', 'panel_2010_2015_inspection.pkl'))
+    df_2010_2015 = df_2010_2015[RETAINED_COLUMNS]
+    # Create identifiers for the whole period whether an event is experienced
+    # by an individual
+    for df in [df_2005_2010, df_2010_2015]:
+        for i in EVENT_VARIABLES:
+            df['EVENT_' + i] = df.groupby('ID')['EVENT_' + i].transform(
+                lambda x: x.notnull().any())
+    # Get the starting period of the individual which is in 2005 or 2010
+    df_2005_2010 = df_2005_2010.groupby('ID', as_index=False).first()
+    df_2010_2015 = df_2010_2015.groupby('ID', as_index=False).first()
+    # Append the two frame
+    df = df_2005_2010.append(df_2010_2015)
+
+    # Create identifier for all events
+    df['EVENT_ANY'] = df[['EVENT_' + i for i in EVENT_VARIABLES]].any(
+        axis='columns')
+
+    # Select only ids from the estimation sample
+    panel = pd.read_pickle(ppj('OUT_DATA', 'panel.pkl'))
+    ids = panel.ID.unique()
+    df = df.loc[df.ID.isin(ids)].copy()
+
+    return df
+
 
 def generate_numbers(df):
     # Generate numbers of observations
@@ -102,10 +137,10 @@ def generate_descriptive_statistics(df, event):
 
 
 if __name__ == '__main__':
-    # Load dataframe
-    df = pd.read_pickle(ppj('OUT_DATA', 'panel.pkl'))
+    # Prepare data
+    df = prepare_data()
     # Generate numbers and write to json
     generate_numbers(df)
     # Generate table of descriptive statistics
-    for event in EVENT_VARIABLES:
+    for event in ['ANY'] + EVENT_VARIABLES:
         generate_descriptive_statistics(df, event)
