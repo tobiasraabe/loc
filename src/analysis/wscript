@@ -13,7 +13,9 @@ def build(ctx):
     ctx(
         features='run_py_script',
         source='create_panel_descriptives.py',
-        deps=ctx.path_to(ctx, 'OUT_DATA', 'panel.pkl'),
+        deps=[ctx.path_to(ctx, 'OUT_DATA', 'panel_2005_2010_inspection.pkl'),
+              ctx.path_to(ctx, 'OUT_DATA', 'panel_2010_2015_inspection.pkl'),
+              ctx.path_to(ctx, 'OUT_DATA', 'panel.pkl')],
         target=[
             ctx.path_to(
                 ctx, 'OUT_TABLES', 'panel_descriptives_numbers.json')] + [
@@ -27,7 +29,7 @@ def build(ctx):
         features='run_py_script',
         source='panel_reg.py',
         deps=[
-            ctx.path_to(ctx, 'OUT_DATA', 'loc_pca.pkl'),
+            ctx.path_to(ctx, 'OUT_DATA', 'loc_fa.pkl'),
             ctx.path_to(ctx, 'OUT_DATA', 'panel.pkl'),
         ],
         target=ctx.path_to(ctx, 'OUT_ANALYSIS', 'panel_reg.pkl'),

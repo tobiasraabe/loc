@@ -5,6 +5,7 @@ import numpy as np
 import statsmodels.formula.api as smf
 from bld.project_paths import project_paths_join as ppj
 
+
 TABLE_CONVERSION_1 = {
     'FIRST_FACTOR_DELTA': 'Locus of Control',
     'C(EVENT\_LAST\_JOB\_ENDED)[T.True]:EVENT\_LAST\_JOB\_ENDED\_TIME\_DIFF:C(EMPLOYMENT\_STATUS)[T.Not Employed]': 'Displacement * Time Since Last Occurrence * Not Employed',

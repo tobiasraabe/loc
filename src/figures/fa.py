@@ -20,7 +20,7 @@ def plot(model, model_type):
     # Begin figure
     fig, ax = plt.subplots()
 
-    ax.set_xlabel('Number of Principal Components')
+    ax.set_xlabel('Number of Factors')
     ax.set_ylabel('Explained Variance Ratio')
 
     ax.plot(explained_variance_ratio, label='Single')
