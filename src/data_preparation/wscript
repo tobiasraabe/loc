@@ -82,7 +82,8 @@ def build(ctx):
         features='run_py_script',
         source='prepare_loc.py',
         deps=ctx.path_to(ctx, 'OUT_DATA', 'loc_raw.pkl'),
-        target=ctx.path_to(ctx, 'OUT_DATA', 'loc_container.pkl'),
+        target=[ctx.path_to(ctx, 'OUT_DATA', 'loc_container.pkl'),
+                ctx.path_to(ctx, 'OUT_TABLES', 'cronbachs_alphas.json')],
         name='prepare_loc'
     )
 
@@ -94,6 +95,7 @@ def build(ctx):
             ctx.path_to(ctx, 'OUT_DATA', 'model_pca_two_comp.pkl'),
             ctx.path_to(ctx, 'OUT_DATA', 'model_pca_ten_comp.pkl'),
             ctx.path_to(ctx, 'OUT_DATA', 'loc_pca.pkl'),
+            ctx.path_to(ctx, 'OUT_DATA', 'pca_loadings.pkl'),
         ],
         name='loc_pca'
     )
@@ -106,6 +108,7 @@ def build(ctx):
             ctx.path_to(ctx, 'OUT_DATA', 'model_fa_two_comp.pkl'),
             ctx.path_to(ctx, 'OUT_DATA', 'model_fa_ten_comp.pkl'),
             ctx.path_to(ctx, 'OUT_DATA', 'loc_fa.pkl'),
+            ctx.path_to(ctx, 'OUT_DATA', 'fa_loadings.pkl'),
         ],
         name='loc_fa'
     )

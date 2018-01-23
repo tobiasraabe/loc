@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 from bld.project_paths import project_paths_join as ppj
 from sklearn.externals import joblib
+import json
 
 
 # This list is ordered according to the item table in our paper.
@@ -76,8 +77,10 @@ if __name__ == '__main__':
     cronbachs_alpha_seven = calculate_cronbachs_alpha(data)
     # Create container
     container = {}
-    container['cronbachs_alpha_seven'] = cronbachs_alpha_seven
-    container['cronbachs_alpha_ten'] = cronbachs_alpha_ten
     container['data'] = df
+    # Save numbers to json
+    with open(ppj('OUT_TABLES', 'cronbachs_alphas.json'), 'w') as file:
+        file.write(json.dumps({'ca_seven': cronbachs_alpha_seven,
+                               'ca_ten': cronbachs_alpha_ten}))
     # Save data for PCA and FA
     joblib.dump(container, ppj('OUT_DATA', 'loc_container.pkl'))

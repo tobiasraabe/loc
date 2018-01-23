@@ -23,9 +23,6 @@ def build(ctx):
             name=f'pca_{model_type}',
         )
 
-    for model_type in ['ten_comp', 'two_comp']:
-        name = model_type.replace('_', '-')
-
         ctx(
             features='run_py_script',
             source='fa.py',
@@ -35,3 +32,33 @@ def build(ctx):
             append=model_type,
             name=f'fa_{model_type}',
         )
+
+    for decomposition in ['pca', 'fa']:
+
+        ctx(
+            features='run_py_script',
+            source='stated_loc_dist.py',
+            deps=ctx.path_to(ctx, 'OUT_DATA', f'loc_{decomposition}.pkl'),
+            target=ctx.path_to(
+                ctx, 'OUT_FIGURES', f'fig-stated-loc-{decomposition}.png'),
+            append=decomposition,
+            name=f'stated_loc_{decomposition}',
+        )
+
+    ctx(
+        features='run_py_script',
+        source='level_change_loc.py',
+        deps=[ctx.path_to(ctx, 'OUT_DATA', 'loc_fa.pkl'),
+              ctx.path_to(ctx, 'OUT_DATA', 'panel.pkl')],
+        target=ctx.path_to(ctx, 'OUT_FIGURES',
+                           'fig-level-change-loc-event.png'),
+        name='level_change_loc',
+    )
+
+    ctx(
+        features='run_py_script',
+        source='fig_loadings_fa.py',
+        deps=ctx.path_to(ctx, 'OUT_DATA', 'fa_loadings.pkl'),
+        target=ctx.path_to(ctx, 'OUT_FIGURES', 'fig-fa-factor-loadings.png'),
+        name='level_change_loc',
+    )
