@@ -572,7 +572,7 @@ def clean_event_variables(df):
                                       suffixes=('', '_2015'))
     # Calculate time difference for each event to the next interview month in
     # 2010 or 2015 and assign values to EVENT_var_TIME_DIFF
-    for var in EVENT_VARIABLES + ['LAST_JOB_ENDED_LIMITED']:
+    for var in EVENT_VARIABLES:
         df_2005_2010['EVENT_' + var + '_TIME_DIFF'] = df_2005_2010.apply(
             calculate_time_difference_between_event_int, args=(var, 2010),
             axis=1)
@@ -583,13 +583,15 @@ def clean_event_variables(df):
         # a NaN. This means that the last value of EVENT_var_TIME_DIFF per ID
         # in 2010 or 2015 contains the time difference in months to the last
         # event. I do not know how to handle multiple durations. All other NaNs
-        # will be filled with 0.
+        # will be filled with -1.
         df_2005_2010['EVENT_' + var + '_TIME_DIFF'] = (
-            df_2005_2010['EVENT_' + var + '_TIME_DIFF'].fillna(
-                method='ffill').fillna(0))
+            df_2005_2010.groupby(
+                'ID')['EVENT_' + var + '_TIME_DIFF'].transform(
+                    lambda x: x.fillna(method='ffill').fillna(-1)))
         df_2010_2015['EVENT_' + var + '_TIME_DIFF'] = (
-            df_2010_2015['EVENT_' + var + '_TIME_DIFF'].fillna(
-                method='ffill').fillna(0))
+            df_2010_2015.groupby(
+                'ID')['EVENT_' + var + '_TIME_DIFF'].transform(
+                    lambda x: x.fillna(method='ffill').fillna(-1)))
 
     # Sort dataframes
     df_2005_2010.sort_values(['ID', 'YEAR'], axis='rows', inplace=True)
