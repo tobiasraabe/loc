@@ -78,11 +78,13 @@ def prepare_data():
 def generate_numbers(df):
     # Generate numbers of observations
     gen_num = {}
-    gen_num['Number of observations'] = df.shape[0]
+    gen_num['Number of obs'] = df.shape[0]
     gen_num['Number of unique IDs'] = df.ID.unique().shape[0]
-    gen_num['Number of observations in both periods'] = (
-        gen_num['Number of observations'] -
+    gen_num['Number of obs in both periods'] = (
+        gen_num['Number of obs'] -
         gen_num['Number of unique IDs'])
+    gen_num['Number of obs in 2005-2010'] = df[df.YEAR == 2005].shape[0]
+    gen_num['Number of obs in 2010-2015'] = df[df.YEAR == 2010].shape[0]
 
     with open(ppj('OUT_TABLES',
                   'panel_descriptives_numbers.json'), 'w') as file:

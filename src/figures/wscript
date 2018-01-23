@@ -62,3 +62,11 @@ def build(ctx):
         target=ctx.path_to(ctx, 'OUT_FIGURES', 'fig-fa-factor-loadings.png'),
         name='level_change_loc',
     )
+
+    ctx(
+        features='run_py_script',
+        source='fig_events_count.py',
+        deps=ctx.path_to(ctx, 'OUT_DATA', 'panel.pkl'),
+        target=ctx.path_to(ctx, 'OUT_FIGURES', 'fig-events-count.png'),
+        name='fig_events_count',
+    )
