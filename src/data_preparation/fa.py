@@ -30,7 +30,7 @@ def main(df):
 
     # Fit the FactorAnalysis on the 2010 data first.
     fa = Pipeline(steps=[
-        ('std', StandardScaler()),
+        # ('std', StandardScaler()),
         ('fa', FactorAnalysis(max_iter=10000))
     ])
 
@@ -61,7 +61,12 @@ def main(df):
     # Merge the three datasets with the two newly created axes.
     frames = [loc_data_2005, loc_data_2010, loc_data_2015]
     df = pd.concat(frames, axis='rows')
+
+    # Calculate differences of first factor by substracting the previous from
+    # the following period
     df.sort_values(['ID', 'YEAR'], axis='rows', inplace=True)
+    df['FIRST_FACTOR_DELTA'] = df.groupby(
+        'ID')['FIRST_FACTOR'].transform(pd.Series.diff)
 
     # Save the LoC variables with the two axes as a pickle file.
     df.to_pickle(ppj('OUT_DATA', 'loc_fa.pkl'))
