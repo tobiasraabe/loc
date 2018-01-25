@@ -366,7 +366,7 @@ Additionally, we include the total number squared to test for any non-
 linearities. In this specification, we do not control for the time between the
 occurrences of the traumata and the locus of control measurement.
 
-In our first and second specification, we estimate the following equation
+In our first specification, we estimate the following equation
 
 \begin{center}
 	$ \Delta LOC \textsubscript{i,t}= \alpha + X \textsubscript{i,t} * \beta  + X \textsubscript{i,t} ' T \textsubscript{i,t} * \delta + W \textsubscript{i,t} ' S \textsubscript{i,t} * \gamma + (W \textsubscript{i,t} ' S \textsubscript{i,t}) ' T \textsubscript{i,t} * \zeta + Z \textsubscript{i,t} * \eta + \epsilon\textsubscript{i}  $
@@ -385,14 +385,14 @@ interaction with the times since the occurrence of the three traumatic events.
 $ Z \textsubscript{i,t}$ is a vector in which the control variables are
 included and $\epsilon\textsubscript{i}$ is the error term.
 
-The vector $\beta$ measures the average treatment effect on the treated which
-shows how each traumatic experience changes the change in locus of control over
-time on average. In our first specification, in which the traumata are not
-necessarily exogenous, $\beta $ is clearly the effect only on the treated as
-there could be some possible selection. In our second specification, we make
-sure that all traumata are exogenously caused and therefore there should be no
-selection in or out of treatment. Consequently, we would expect $\beta$ to
-measure the average treatment effect without any conditioning.
+For all events apart from divorce, separation and displacement, the vector $\beta$ 
+measures the average treatment effect on the treated which
+shows how each traumatic experience affects the change in locus of control on average without
+any time effects. 
+We try to select the most exogenous traumatic events as possible, but the probability that someone suffers 
+from an event differs between the individuals. Older people are more likely to suffer from the death of a father or a mother than younger people are or people who are single are less likely to get an unplanned child than people in a relationship. As we are not able to control for everything, we cannot say that we
+measure the average treatment effect, but only the effect on the treated.
+
 
 In our third specification, the estimated equation is
 
