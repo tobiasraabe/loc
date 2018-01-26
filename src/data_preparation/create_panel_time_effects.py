@@ -32,8 +32,11 @@ def restrict_sample(df):
                        (df.EVENT_ALL_COUNT == 0), 'ID'].values
     df = df.loc[(df.YEAR == 2015) & (df.ID.isin(valid_ids))]
 
-    # Drop unused variables
-    df.drop('EVENT_ALL_COUNT', axis='columns', inplace=True)
+    list_counts = [i for i in df if 'EVENT' in i and 'COUNT' in i and
+                   'PREVIOUS' not in i and 'LIMITED' not in i and 'LEADS' not
+                   in i]
+    # Set up column with counts of all traumatic events.
+    df['EVENT_COUNTS_ALL'] = df[list_counts].sum(axis=1)
 
     return df
 

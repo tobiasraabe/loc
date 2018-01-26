@@ -80,6 +80,14 @@ def build(ctx):
 
     ctx(
         features='run_py_script',
+        source='create_panel_common_trend.py',
+        deps=ctx.path_to(ctx, 'OUT_DATA', 'panel.pkl'),
+        target=ctx.path_to(ctx, 'OUT_DATA', 'panel_common_trend.pkl'),
+        name='create_panel_common_trend'
+    )
+
+    ctx(
+        features='run_py_script',
         source='prepare_loc.py',
         deps=ctx.path_to(ctx, 'OUT_DATA', 'loc_raw.pkl'),
         target=[ctx.path_to(ctx, 'OUT_DATA', 'loc_container.pkl'),
