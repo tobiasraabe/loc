@@ -20,15 +20,21 @@ def plot(model, model_type):
     # Begin figure
     fig, ax = plt.subplots()
 
-    ax.set_xlabel('Number of Factors')
-    ax.set_ylabel('Explained Variance Ratio')
-
     ax.plot(explained_variance_ratio, label='Single')
     ax.plot(np.cumsum(explained_variance_ratio), label='Cumulativ')
 
-    ax.legend()
+    ax.set_xlabel('Number of Factors')
+    ax.set_ylabel('Explained Variance Ratio')
 
-    plt.tight_layout()
+    if model_type == 'two_comp':
+        ax.set_xticks([0, 1])
+        ax.set_xticklabels([1, 2])
+    elif model_type == 'ten_comp':
+        ax.set_xticks(list(range(7)))
+        ax.set_xticklabels(list(range(1, 8)))
+    ax.set_ylim(0, 1.1)
+
+    ax.legend()
 
     name = model_type.replace('_', '-')
     plt.savefig(ppj('OUT_FIGURES', f'fig-fa-{name}-explained-variance.png'))

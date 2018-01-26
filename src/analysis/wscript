@@ -44,6 +44,7 @@ def build(ctx):
             ctx.path_to(ctx, 'OUT_TABLES', 'reg_table_1.tex'),
             ctx.path_to(ctx, 'OUT_TABLES', 'reg_table_2.tex'),
             ctx.path_to(ctx, 'OUT_TABLES', 'reg_table_3.tex'),
+            ctx.path_to(ctx, 'OUT_TABLES', 'reg_table_4.tex'),
         ],
         name='reg_tables'
     )

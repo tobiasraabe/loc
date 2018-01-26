@@ -15,15 +15,15 @@ def plot(model, model_type):
     # Begin figure
     fig, ax = plt.subplots()
 
-    ax.set_xlabel('Number of Principal Components')
-    ax.set_ylabel('Explained Variance Ratio')
-
     ax.plot(pca.explained_variance_ratio_, label='Single')
     ax.plot(np.cumsum(pca.explained_variance_ratio_), label='Cumulativ')
 
-    ax.legend()
+    ax.set_xlabel('Number of Principal Components')
+    ax.set_ylabel('Explained Variance Ratio')
 
-    plt.tight_layout()
+    ax.set_ylim(0, 1.1)
+
+    ax.legend()
 
     name = model_type.replace('_', '-')
     plt.savefig(ppj('OUT_FIGURES', f'fig-pca-{name}-explained-variance.png'))

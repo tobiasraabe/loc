@@ -10,34 +10,26 @@ def build(ctx):
     # used to make persistent customization to figures.
     copyfile('src/figures/matplotlibrc', 'bld/matplotlibrc')
 
-    for model_type in ['ten_comp', 'two_comp']:
-        name = model_type.replace('_', '-')
+    for decomposition in ['fa', 'pca']:
+        for model_type in ['ten_comp', 'two_comp']:
+            name = model_type.replace('_', '-')
+
+            ctx(
+                features='run_py_script',
+                source=f'fig-{decomposition}-explained-variance.py',
+                deps=ctx.path_to(
+                    ctx, 'OUT_DATA',
+                    f'model_{decomposition}_{model_type}.pkl'),
+                target=ctx.path_to(
+                    ctx, 'OUT_FIGURES',
+                    f'fig-{decomposition}-{name}-explained-variance.png'),
+                append=model_type,
+                name=f'{decomposition}_{model_type}',
+            )
 
         ctx(
             features='run_py_script',
-            source='pca.py',
-            deps=ctx.path_to(ctx, 'OUT_DATA', f'model_pca_{model_type}.pkl'),
-            target=ctx.path_to(ctx, 'OUT_FIGURES',
-                               f'fig-pca-{name}-explained-variance.png'),
-            append=model_type,
-            name=f'pca_{model_type}',
-        )
-
-        ctx(
-            features='run_py_script',
-            source='fa.py',
-            deps=ctx.path_to(ctx, 'OUT_DATA', f'model_fa_{model_type}.pkl'),
-            target=ctx.path_to(ctx, 'OUT_FIGURES',
-                               f'fig-fa-{name}-explained-variance.png'),
-            append=model_type,
-            name=f'fa_{model_type}',
-        )
-
-    for decomposition in ['pca', 'fa']:
-
-        ctx(
-            features='run_py_script',
-            source='stated_loc_dist.py',
+            source='fig-stated-loc-distribution.py',
             deps=ctx.path_to(ctx, 'OUT_DATA', f'loc_{decomposition}.pkl'),
             target=ctx.path_to(
                 ctx, 'OUT_FIGURES', f'fig-stated-loc-{decomposition}.png'),
@@ -47,7 +39,7 @@ def build(ctx):
 
     ctx(
         features='run_py_script',
-        source='level_change_loc.py',
+        source='fig-level-change-loc-event.py',
         deps=[ctx.path_to(ctx, 'OUT_DATA', 'loc_fa.pkl'),
               ctx.path_to(ctx, 'OUT_DATA', 'panel.pkl')],
         target=ctx.path_to(ctx, 'OUT_FIGURES',
@@ -57,7 +49,7 @@ def build(ctx):
 
     ctx(
         features='run_py_script',
-        source='fig_loadings_fa.py',
+        source='fig-fa-factor-loadings.py',
         deps=ctx.path_to(ctx, 'OUT_DATA', 'fa_loadings.pkl'),
         target=ctx.path_to(ctx, 'OUT_FIGURES', 'fig-fa-factor-loadings.png'),
         name='level_change_loc',
@@ -65,7 +57,7 @@ def build(ctx):
 
     ctx(
         features='run_py_script',
-        source='fig_events_count.py',
+        source='fig-event-count.py',
         deps=ctx.path_to(ctx, 'OUT_DATA', 'panel.pkl'),
         target=ctx.path_to(ctx, 'OUT_FIGURES', 'fig-events-count.png'),
         name='fig_events_count',

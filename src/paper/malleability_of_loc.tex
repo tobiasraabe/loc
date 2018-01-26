@@ -28,31 +28,31 @@
     urlcolor={blue!80!black}
 }
 
-\usepackage[backend=bibtex, natbib=true, bibencoding=utf8, safeinputenc=true,
+\usepackage[backend=biber, natbib=true, bibencoding=utf8, safeinputenc=true,
 bibstyle=authoryear, citestyle=authoryear-comp, maxcitenames=2, mincitenames=1,
 uniquelist=false, useprefix=true, maxbibnames=99, minbibnames=99, backref=true,
 backrefstyle=three, doi=true, isbn=false, sortcites=false, dashed=false,
-firstinits=true]{biblatex}
+giveninits=true, uniquename=init]{biblatex}
 
 \addbibresource{references.bib}
 
 \pagenumbering{roman}
 \begin{document}
-	\begin{titlepage}
-		\begin{center}
-			\vspace*{35mm}
-			{\bfseries\Large{Malleability of Locus of Control by Traumatic Events}\\
-			\vspace{25mm}}
-			\begin{spacing}{1.3}
-				\large Research Module in Management and Applied Microeconomics\\
-				\vspace{65mm}
-			   Prof. Dr. Thomas Dohmen, Dr. Philipp Eisenhauer \\
-				\vspace{10mm}
-				January 2018   \\
-				\textbf{Tobias Raabe, Imke Strampe} \\
-			\end{spacing}
-		\end{center}
-	\end{titlepage}
+    \begin{titlepage}
+        \begin{center}
+            \vspace*{35mm}
+            {\bfseries\Large{Malleability of Locus of Control by Traumatic Events}\\
+            \vspace{25mm}}
+            \begin{spacing}{1.3}
+                \large Research Module in Management and Applied Microeconomics\\
+                \vspace{65mm}
+               Prof. Dr. Thomas Dohmen, Dr. Philipp Eisenhauer \\
+                \vspace{10mm}
+                January 2018   \\
+                \textbf{Tobias Raabe, Imke Strampe} \\
+            \end{spacing}
+        \end{center}
+    \end{titlepage}
 
 \tableofcontents
 
@@ -133,9 +133,9 @@ Section~\ref{sec:conclusion}.
 \section{Data}
 \label{sec:data}
 
-Our data comes from the German Socio-Economic Panel (GSOEP)  \citep{gsoep2017}
-which is an annual representative household panel study. It focuses on all
-participants from 2005-2015 which is about 16,000 households or 30,000 people.
+Our data comes from the German Socio-Economic Panel \citep{gsoep2017} which is
+an annual representative household panel study. It focuses on all participants
+from 2005-2015 which is about 16,000 households or 30,000 people.
 
 \subsection{Locus of Control} % (fold)
 \label{sub:locus_of_control}
@@ -147,52 +147,69 @@ to what extent they agree or disagree with the statements presented in
 Table~\ref{tab:loc_items} (1 = disagree completely; 7 = agree completely).
 
 \begin{table}[H]
-	\begin{tabular}{p{1.5cm} p{14cm}}
-	\toprule
-	Question: & \textit{The following statements apply to different attitudes
-	towards life and the future. To what degree to you personally agree with
-	the following statements? Please answer according to the following scale: 1
-	means disagree completely, and 7 means agree completely.} \\
-	\midrule
-	1  & How my life goes depends on myself \\
-	2  & Compared to others, I haven't achieved what I deserved \\
-	3  & What one achieves in life is mainly a question of luck or fate \\
-	4  & If a person is socially or politically active, he/she can have an effect on social conditions \\
-	5  & I often have the experience that others make decisions regarding my life \\
-	6  & One has to work hard in order to succeed \\
-	7  & When I encounter difficulties, I have doubts about my abilities \\
-	8  & The opportunities I have in life are determined by social conditions \\
-	9  & Inborn abilities are more important than any efforts one can make \\
-	10 & I have little control over the things that happen in my life \\
-	\bottomrule
-	\end{tabular}
-	\caption{Locus of Control - Items, Source: GSOEP 2005, 2010, 2015}
-	\label{tab:loc_items}
+    \begin{tabular}{p{1.5cm} p{14cm}}
+    \toprule
+    Question: & \textit{The following statements apply to different attitudes
+    towards life and the future. To what degree to you personally agree with
+    the following statements? Please answer according to the following scale: 1
+    means disagree completely, and 7 means agree completely.} \\
+    \midrule
+    1  & How my life goes depends on myself \\
+    2  & Compared to others, I haven't achieved what I deserved \\
+    3  & What one achieves in life is mainly a question of luck or fate \\
+    4  & If a person is socially or politically active, he/she can have an effect on social conditions \\
+    5  & I often have the experience that others make decisions regarding my life \\
+    6  & One has to work hard in order to succeed \\
+    7  & When I encounter difficulties, I have doubts about my abilities \\
+    8  & The opportunities I have in life are determined by social conditions \\
+    9  & Inborn abilities are more important than any efforts one can make \\
+    10 & I have little control over the things that happen in my life \\
+    \bottomrule
+    \end{tabular}
+    \caption{Locus of Control - Items, Source: GSOEP 2005, 2010, 2015}
+    \label{tab:loc_items}
 \end{table}
 
 Following the specification of \citet{specht2013}, we only focus on items 1, 2,
-3, 5, 7, 8, 10. We also recoded all items so that higher numbers reflect a
-greater feeling of control. A calculation of Cronbach's Alpha, a metric for the
-internal consistency of a scale, yields a value of 0.698 for the seven item
-scale. This is an improvement of 0.091 compared to the same metric applied to
-the ten item scale. The measure can yield values in $]-\infty, 1]$ where values
-higher than 0.65 are acceptable as a rule of thumb.
+3, 5, 7, 8, 10.\footnote{Items 4 and 6 cover cultural aspects and the wording
+of item 9 cannot be unambiguously attributed to internal or external LoC.} We
+also recoded all items so that higher numbers reflect a greater feeling of
+control. A calculation of Cronbach's Alpha, a metric for the internal
+consistency of a scale, yields a value of 0.698 for the seven item scale. This
+is an improvement of 0.091 compared to the same metric applied to the ten item
+scale. The measure can yield values in $]-\infty, 1]$ where values higher than
+0.65 are acceptable as a rule of thumb.\footnote{The values of Cronbach's Alpha
+are comparable the values reported in \citet{richter2017}.}
 
 As \citet{piatek2016} find that using an index to construct a measure of locus
 of control leads to measurement error and attenuation bias, we conduct a factor
 analysis.\footnote{We also used PCA to extract locus of control, but found out
 that the explained variance by the first principal component is about 40\% and
 therefore insufficiently high. For completeness, Figure~\ref{fig:pca_ev}
-reports the explained variance in percentages.} The explained variance ratio is
-displayed in Figure~\ref{fig:fa_ev} and shows that the first factor explains
-more than 80\% of the variance. The factor loadings of the items are shown in
+reports the explained variance in percentages.}
+
+One issue with factor analysis is that it requires observations to be
+independent and identically distributed. As we have a panel dataset, the
+assumption that observations are independent does not hold. Furthermore, we do
+not want to employ multiple factor analyses for each wave in 2005, 2010 and
+2015 since estimation would return different factor loadings which makes
+comparison over time even more problematic. Our solution to this problem is to
+fit the factor analysis on the LoC variables only in 2010. The advantage is
+that independence is guaranteed and we fit the model on every individual since
+every individual has answered the Personal Questionnaire in 2010.
+
+Figure~\ref{fig:stated_loc} shows the resulting distribution of LoC over all
+waves. The distribution is roughly similar to a standard normal distribution
+indicated by the orange colored line. The explained variance ratio is displayed
+in Figure~\ref{fig:fa_ev} and shows that the first factor explains more than
+80\% of the variance. The factor loadings of the items are shown in
 Figure~\ref{fig:fa_loadings}.
 
 \begin{figure}[H]
-	\centering
-	\includegraphics[width=0.7\textwidth]{../../bld/out/figures/fig-stated-loc-fa}
-	\caption{Stated Locus of Control}
-	\label{fig:stated_loc}
+    \centering
+    \includegraphics[width=0.7\textwidth]{../../out/figures/fig-stated-loc-fa}
+    \caption{Distribution of first factor of LoC for years 2005, 2010 and 2015}
+    \label{fig:stated_loc}
 \end{figure}
 
 % subsection locus_of_control (end)
@@ -209,32 +226,39 @@ of events is shown in Table~\ref{tab:negative_life_events}. Another feature of
 the events is that they must be sufficiently involuntary since we want to
 eliminate the influence of selectivity and reverse causality.
 
-\begin{table}[H]
-	\caption{List of Negative Life Events}
-	\label{tab:negative_life_events}
-	\centering
+We assume that these life events are negative, meaning they shift the locus of
+control towards an external one. This characterization is not unambiguously as
+even those unfortunate events can have a positive effect. The relatives of
+person who died after a long time of a severe illness might feel relief due to
+the loss of pressure a case of illness can cause. Another example is an
+unplanned pregnancy which might be an involuntary but fortunate incident.
 
-	\begin{tabular}{>{\quad}l}
-	\toprule
-	Questions\\
-	\midrule
-	\rule{0pt}{2.5ex}	\rowgroup{\textit{Social Environment}} \\
-	Child has Disorder\\
-	Death of Child\\
-	Death of Father\\
-	Death of Household Person\\
-	Death of Mother\\
-	Death of Partner\\
-	Divorce\\
-	Household composition change\\
-	\rule{0pt}{2.5ex}	\rowgroup{\textit{Economics Environment}} \\
-	Displacement\\
-	\rule{0pt}{2.5ex}	\rowgroup{\textit{Health Environment}} \\
-	Legally Handicapped\\
-	Separation\\
-	Unplanned Pregnancy\\
-	\bottomrule
-	\end{tabular}
+\begin{table}[H]
+    \caption{List of Negative Life Events}
+    \label{tab:negative_life_events}
+    \centering
+
+    \begin{tabular}{>{\quad}l}
+    \toprule
+    Questions\\
+    \midrule
+    \rule{0pt}{2.5ex}\rowgroup{\textit{Social Environment}} \\
+    Child has Disorder\\
+    Death of Child\\
+    Death of Father\\
+    Death of Household Person\\
+    Death of Mother\\
+    Death of Partner\\
+    Divorce\\
+    Household composition change\\
+    Separation\\
+    \rule{0pt}{2.5ex}\rowgroup{\textit{Economic Environment}} \\
+    Displacement\\
+    \rule{0pt}{2.5ex}\rowgroup{\textit{Health Environment}} \\
+    Legally Handicapped\\
+    Unplanned Pregnancy\\
+    \bottomrule
+    \end{tabular}
 \end{table}
 
 One important problem in the preparation of the events is the exact attribution
@@ -242,10 +266,6 @@ to the periods between two interviews. All events related to death,
 displacement, divorce, household composition change, separation can be found in
 the Personal Questionnaire with the exact month of the event in the survey or
 previous year.
-
-Death of a close relative is a good candidate for changing locus of control.
-The salience due to strong emotional bonds to the deceased person and the
-potential exogeneity of the event if it is caused by an accident,
 
 The information about unplanned pregnancies and whether a child is born with a
 disorder can be found in the Mother and Child Questionnaire which follows
@@ -271,7 +291,7 @@ As selectivity and anticipation plays a critical role in the assessment of the
 malleability of locus of control, we create an additional variable for the
 second regression specification which restricts displacement to job losses due
 to displacement by employer and plant closure. Other reasons for job loss like
-mutual agreement to terminate the contract are discarded. WIth this approach we
+mutual agreement to terminate the contract are discarded. With this approach we
 follow \citet{preuss2017}.
 
 The final sample consists of 21,246 observations, 12191 individuals from
@@ -282,9 +302,22 @@ individuals. Descriptive statistics of the controls comparing individuals with
 and without events before the event are shown in the appendix (see
 Table~\ref{tab:descriptive-statistics-any} to
 Table~\ref{tab:descriptive-statistics-separated}).
-Figure~\ref{fig:events_count} shows the absolute number of events per
-individual and period in the sample.
+Figure~\ref{fig:events_count} shows how often each event occurred per
+individual between 2005-2010 and 2010-2015.
 
+Now, we can compute the change in locus of control per observation between two
+interviews and compare the average change for observations experiencing an
+event and those who do not. Figure~\ref{fig:level-change-loc-event} shows the
+resulting averages. The estimation of the effects and the quantification of
+uncertainty surrounding these estimates will addressed in
+Section~\ref{sec:results}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{../../out/figures/fig-level-change-loc-event}
+    \caption{Average change in Locus of Control for events}
+    \label{fig:level-change-loc-event}
+\end{figure}
 % subsection events (end)
 
 \subsection{Controls} % (fold)
@@ -292,24 +325,15 @@ individual and period in the sample.
 
 Regarding the controls, we follow the specifications by \citet{cobb2013}.
 Dummies for age groups are included such that each age group encompasses about
-ten years. Marital status is a dummy for single or relationship and is derived
-from the legal status of the relationship. We control for immigrant status and
-employment status, the latter can be employed, not employed or others. Besides,
-we include seven education groups which range from no education to higher
-education. Log household income and gender is added as controls. In later
-specifications, we also include dummies for the time passed since the last
-event.
+ten years. Marital status is a dummy for single or in relationship and is
+derived from the legal status of the relationship. We control for immigrant
+status and employment status, the latter can be employed, not employed or
+others. Besides, we include seven education groups which range from no
+education to higher education. Log household income and gender is added as
+controls. Another covariate for the first and second regression specification
+is the time passed in months since the last event occurred.
 
 % subsection controls (end)
-
-We expect to see a shift towards a more external locus of control after the
-occurrence of each of the traumata. If such an exogenously caused, dreadful
-incident happens to someone, the person might wonder why she was affected. He
-might feel as a victim, become more doubtful and have the impression that he
-does not deserve that. Besides, his feeling of having control over what happens
-to him would shrink. Consequently, she would start believing more in fate than
-in her own ability of mastering everything and the locus of control would shift
-towards externality. The entire process could happen subconsciously.
 
 
 \section{Estimation Strategy}
@@ -323,10 +347,10 @@ differences-in-differences analysis.
 
 In our first and second specification, we include not only the traumatic
 events, but also interaction terms between the events and the time in months
-between the occurrence of the event and the loc measurement. Thereby, the
-coefficient of the event measures the effect of the event if it happened right
-now and the coefficient of the interaction term measures the effect of one
-additional month which has passed since.
+between the occurrence of the event and the locus of control measurement.
+Thereby, the coefficient of the event measures the effect of the event if it
+happened right now and the coefficient of the interaction term measures the
+effect of one additional month which has passed since.
 
 \citet{preuss2017} find that the effect of a displacement on the locus of
 control almost vanishes with reemployment. Consequently, we should also account
@@ -369,7 +393,7 @@ occurrences of the traumata and the locus of control measurement.
 In our first specification, we estimate the following equation
 
 \begin{center}
-	$ \Delta LOC \textsubscript{i,t}= \alpha + X \textsubscript{i,t} * \beta  + X \textsubscript{i,t} ' T \textsubscript{i,t} * \delta + W \textsubscript{i,t} ' S \textsubscript{i,t} * \gamma + (W \textsubscript{i,t} ' S \textsubscript{i,t}) ' T \textsubscript{i,t} * \zeta + Z \textsubscript{i,t} * \eta + \epsilon\textsubscript{i}  $
+    $ \Delta LOC_{i,t}= \alpha + X_{i,t} * \beta  + X_{i,t} ' T_{i,t} * \delta + W_{i,t} ' S_{i,t} * \gamma + (W_{i,t}' S_{i,t}) ' T_{i,t} * \zeta + Z_{i,t} * \eta + \epsilon_{i}  $
 \end{center}
 
 where $\alpha$ is the average change in locus of control, $
@@ -385,21 +409,22 @@ interaction with the times since the occurrence of the three traumatic events.
 $ Z \textsubscript{i,t}$ is a vector in which the control variables are
 included and $\epsilon\textsubscript{i}$ is the error term.
 
-For all events apart from divorce, separation and displacement, the vector $\beta$ 
-measures the average treatment effect on the treated which
-shows how each traumatic experience affects the change in locus of control on average without
-any time effects. 
-We try to select the most exogenous traumatic events as possible, but the probability that someone suffers 
-from an event differs between the individuals. Older people are more likely to suffer from the death of a father or a mother than younger people are or people who are single are less likely to get an unplanned child than people in a relationship. As we are not able to control for everything, we cannot say that we
-measure the average treatment effect, but only the effect on the treated.
-
+For all events apart from divorce, separation and displacement, the vector
+$\beta$ measures the average treatment effect on the treated which shows how
+each traumatic experience affects the change in locus of control on average
+without any time effects. We try to select the most exogenous traumatic events
+as possible, but the probability that someone suffers from an event differs
+between the individuals. Older people are more likely to suffer from the death
+of a father or a mother than younger people are or people who are single are
+less likely to get an unplanned child than people in a relationship. As we are
+not able to control for everything, we cannot say that we measure the average
+treatment effect, but only the effect on the treated.
 
 In our third specification, the estimated equation is
 
 \begin{align}
-	\Delta LOC \textsubscript{i,t}= \alpha + N \textsubscript{i,t} * \beta + N
-	\textsuperscript{2}\textsubscript{i,t} * \eta + Z \textsubscript{i,t} *
-	\gamma + Y\textsubscript{t} * \delta + \epsilon\textsubscript{i}
+    \Delta LOC_{i,t}= \alpha + N_{i,t} * \beta + N^{2}_{i,t} * \eta + Z_{i,t} *
+    \gamma + \epsilon_{i}
 \end{align}
 
 in which we include the number of traumatic experiences $N \textsubscript{i,t}$
@@ -447,35 +472,32 @@ significant effects for those who experienced a displacement and who are
 currently unemployed.
 
 \begin{table}[H]
-	\tiny{\input{../../bld/out/tables/reg_table_1.tex}}
-	\footnotesize \textit{Included controls: education, age, ln(hh income),
-	employment status, migration status, gender, marital status; Standard
-	errors are clustered on the individual level.}
-	\caption{First Specification}
-	\label{tab:first_reg}
+    \tiny{\input{reg_table_1.tex}}
+    \footnotesize \textit{Included controls: education, age, ln(hh income),
+    employment status, migration status, gender, marital status; Standard
+    errors are clustered on the individual level.}
+    \caption{First Specification}
+    \label{tab:first_reg}
 \end{table}
-\newpage
 
 
 \begin{table}[H]
-	\tiny{\input{../../bld/out/tables/reg_table_2.tex}}
-	\footnotesize \textit{Included controls: education, age, ln(hh income),
-	employment status, migration status, gender, marital status; Standard
-	errors are clustered on the individual level.}
-	\caption{Second Specification}
-	\label{tab:second_reg}
+    \tiny{\input{../../out/tables/reg_table_2.tex}}
+    \footnotesize \textit{Included controls: education, age, ln(hh income),
+    employment status, migration status, gender, marital status; Standard
+    errors are clustered on the individual level.}
+    \caption{Second Specification}
+    \label{tab:second_reg}
 \end{table}
-\newpage
 
 \begin{table}[H]
-	\input{../../bld/out/tables/reg_table_3.tex}
-	\footnotesize \textit{Included controls: education, age, ln(hh income),
-	employment status, migration status, gender, marital status; Standard
-	errors are clustered on the individual level.}
-	\caption{Third Specification}
-	\label{tab:third_reg}
+    \input{../../out/tables/reg_table_3.tex}
+    \footnotesize \textit{Included controls: education, age, ln(hh income),
+    employment status, migration status, gender, marital status; Standard
+    errors are clustered on the individual level.}
+    \caption{Third Specification}
+    \label{tab:third_reg}
 \end{table}
-\newpage
 
 In our third specification, we see that the number of traumata experienced
 increases the change in the locus of control with a decreasing rate, but this
@@ -570,7 +592,7 @@ event will happen.
 \label{sec:conclusion}
 
 Using three different specifications, we investigated the assumption of a
-stable locus of control using the German Socio Economic Panel. We analyzed how
+stable locus of control using the German Socio-Economic Panel. We analyzed how
 traumatic experiences such as a displacement or an unplanned pregnancy change
 the locus of control and find that none of the events changes it significantly.
 We also tested whether the overall number of traumatic events experienced in
@@ -604,31 +626,31 @@ whether the effects are greater for certain groups.
 \label{sub:figures}
 
 \begin{figure}[H]
-	\centering
-	\includegraphics[width=0.7\textwidth]{../../bld/out/figures/fig-fa-two-comp-explained-variance}
-	\caption{Factor Analysis - Explained Variance}
-	\label{fig:fa_ev}
+    \centering
+    \includegraphics[width=0.7\textwidth]{../../out/figures/fig-fa-two-comp-explained-variance}
+    \caption{Factor Analysis - Explained Variance}
+    \label{fig:fa_ev}
 \end{figure}
 
 \begin{figure}[H]
-	\centering
-	\includegraphics[width=0.7\textwidth]{../../bld/out/figures/fig-pca-two-comp-explained-variance}
-	\caption{Principal Component Analysis - Explained Variance}
-	\label{fig:pca_ev}
+    \centering
+    \includegraphics[width=0.7\textwidth]{../../out/figures/fig-pca-two-comp-explained-variance}
+    \caption{Principal Component Analysis - Explained Variance}
+    \label{fig:pca_ev}
 \end{figure}
 
 \begin{figure}[H]
-	\centering
-	\includegraphics[width=0.7\textwidth]{../../bld/out/figures/fig-fa-factor-loadings}
-	\caption{Factor Analysis - Factor Loadings}
-	\label{fig:fa_loadings}
+    \centering
+    \includegraphics[width=0.7\textwidth]{../../out/figures/fig-fa-factor-loadings}
+    \caption{Factor Analysis - Factor Loadings}
+    \label{fig:fa_loadings}
 \end{figure}
 
 \begin{figure}[H]
-	\centering
-	\includegraphics[width=\textwidth]{../../bld/out/figures/fig-events-count}
-	\caption{Absolute count of events of individuals during one period}
-	\label{fig:events_count}
+    \centering
+    \includegraphics[width=\textwidth]{../../out/figures/fig-events-count}
+    \caption{Number of events of individuals during 2005-2010 and 2010-2015}
+    \label{fig:events_count}
 \end{figure}
 
 
@@ -637,25 +659,25 @@ whether the effects are greater for certain groups.
 \subsection{Descriptive Statistics} % (fold)
 \label{sub:descriptive_statistics}
 
-\input{../../bld/out/tables/tab-panel-descriptive-statistics-any}
-\input{../../bld/out/tables/tab-panel-descriptive-statistics-child-disorder}
-\input{../../bld/out/tables/tab-panel-descriptive-statistics-death-child}
-\input{../../bld/out/tables/tab-panel-descriptive-statistics-death-father}
-\input{../../bld/out/tables/tab-panel-descriptive-statistics-death-hh-person}
-\input{../../bld/out/tables/tab-panel-descriptive-statistics-death-mother}
-\input{../../bld/out/tables/tab-panel-descriptive-statistics-death-partner}
-\input{../../bld/out/tables/tab-panel-descriptive-statistics-divorced}
-\input{../../bld/out/tables/tab-panel-descriptive-statistics-hh-comp-change}
-\input{../../bld/out/tables/tab-panel-descriptive-statistics-last-job-ended}
-\input{../../bld/out/tables/tab-panel-descriptive-statistics-last-job-ended-limited}
-\input{../../bld/out/tables/tab-panel-descriptive-statistics-legally-handicapped-perc}
-\input{../../bld/out/tables/tab-panel-descriptive-statistics-pregnancy-unplanned}
-\input{../../bld/out/tables/tab-panel-descriptive-statistics-separated}
+The following tables present descriptives statistics for control variables for
+the group who experiences the specific event and the group who does not before
+the treatment.
+
+\input{../../out/tables/tab-panel-descriptive-statistics-any}
+\input{../../out/tables/tab-panel-descriptive-statistics-child-disorder}
+\input{../../out/tables/tab-panel-descriptive-statistics-death-child}
+\input{../../out/tables/tab-panel-descriptive-statistics-death-father}
+\input{../../out/tables/tab-panel-descriptive-statistics-death-hh-person}
+\input{../../out/tables/tab-panel-descriptive-statistics-death-mother}
+\input{../../out/tables/tab-panel-descriptive-statistics-death-partner}
+\input{../../out/tables/tab-panel-descriptive-statistics-divorced}
+\input{../../out/tables/tab-panel-descriptive-statistics-hh-comp-change}
+\input{../../out/tables/tab-panel-descriptive-statistics-last-job-ended}
+\input{../../out/tables/tab-panel-descriptive-statistics-last-job-ended-limited}
+\input{../../out/tables/tab-panel-descriptive-statistics-legally-handicapped-perc}
+\input{../../out/tables/tab-panel-descriptive-statistics-pregnancy-unplanned}
+\input{../../out/tables/tab-panel-descriptive-statistics-separated}
 
 % subsection descriptive_statistics (end)
-
-\newpage
-\setcounter{secnumdepth}{0}
-\section{Declaration}
 
 \end{document}

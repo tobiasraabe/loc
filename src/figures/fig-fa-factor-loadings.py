@@ -6,6 +6,17 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
+LOC_MAP = {
+    'LOC_LUCK': 'Item 3',
+    'LOC_ACHIEVED_DESERVE': 'Item 2',
+    'LOC_POSSIBILITIES': 'Item 8',
+    'LOC_LIFES_COURSE': 'Item 1',
+    'LOC_DOUBT': 'Item 7',
+    'LOC_OTHERS': 'Item 5',
+    'LOC_LITTLE_CONTROL': 'Item 10',
+}
+
+
 def plot_loadings():
     fa = pd.read_pickle(ppj('OUT_DATA', 'fa_loadings.pkl'))
 
@@ -17,13 +28,14 @@ def plot_loadings():
     ax.plot(fa.FIRST_FACTOR, fa.SECOND_FACTOR, 'o')
 
     for i, [x, y] in fa.iterrows():
-        if i in ['LOC_DOUBT', 'LOC_ACHIEVED_DESERVE']:
-            y += 0.07
-        elif i in ['LOC_LITTLE_CONTROL', 'LOC_OTHERS']:
-            y -= 0.12
+        if i in ['LOC_LITTLE_CONTROL', 'LOC_OTHERS']:
+            y -= 0.06
+        elif i in ['LOC_ACHIEVED_DESERVE']:
+            y += 0.01
         elif i in ['LOC_POSSIBILITIES']:
             y -= 0.09
-        ax.annotate(i.replace('_', ' ').title(), xy=(x + 0.05, y))
+        ax.annotate(LOC_MAP[i], xy=(x - 0.02, y),
+                    ha='right')
 
     ax.set_xlabel('First Factor')
     ax.set_ylabel('Second Factor')

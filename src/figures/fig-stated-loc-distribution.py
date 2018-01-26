@@ -30,7 +30,7 @@ def create_graph(s, decomposition):
     elif decomposition in ['pca']:
         pass
 
-    ax.set_xlabel('Stated locus of control')
+    ax.set_xlabel('Locus of Control')
     ax.set_ylabel('Density')
 
     plt.savefig(ppj('OUT_FIGURES', f'fig-stated-loc-{decomposition}.png'))

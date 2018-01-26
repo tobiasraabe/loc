@@ -51,7 +51,7 @@ def main():
     for i in range(13, 16):
         axs[i].axis('off')
 
-    plt.savefig(ppj('OUT_FIGURES', 'fig-events-count.png'))
+    plt.savefig(ppj('OUT_FIGURES', 'fig-event-count.png'))
 
 
 if __name__ == '__main__':

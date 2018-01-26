@@ -1,0 +1,410 @@
+
+\documentclass{beamer}
+
+\renewcommand{\baselinestretch}{1.2}\normalsize
+\usetheme{default}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}[frame number]
+
+\date{January 25, 2018}
+\author[Raabe and Strampe]{Tobias Raabe and Imke Strampe}
+\title{Malleability of Locus of Control by Traumatic Events}
+\institute[Uni Bonn]{University of Bonn}
+
+\usepackage[english]{babel}  % set language to adjust headings, automatic hypenation
+\usepackage[utf8]{inputenc}  % allows to use umlauts and certain symbols
+\usepackage[T1]{fontenc}  % typesetting, necessary for umlauts and accentuations
+\usepackage{lmodern}  % Latin Modern Fonts are successors of standard fonts
+\usepackage{amsmath, amssymb, amsthm}
+% Packages for tables
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{array}
+\newcommand{\rowgroup}[1]{\hspace{-1em}#1}  % Allows for unindented groups in tables
+\usepackage{float}
+
+\usepackage{graphicx}
+\usepackage[space]{grffile}
+\usepackage{hyperref}
+\usepackage{setspace}
+\usepackage{xcolor}
+\hypersetup{
+    colorlinks,
+    linkcolor={red!50!black},
+    citecolor={blue!50!black},
+    urlcolor={blue!80!black}
+}
+
+\usepackage{csquotes}
+\usepackage[backend=biber, natbib=true, bibencoding=utf8, safeinputenc=true,
+bibstyle=authoryear, citestyle=authoryear-comp, maxcitenames=2, mincitenames=1,
+uniquelist=false, useprefix=true, maxbibnames=99, minbibnames=99, backref=true,
+backrefstyle=three, doi=true, isbn=false, sortcites=false, dashed=false,
+giveninits=true, uniquename=init]{biblatex}
+
+\addbibresource{references.bib}
+
+\begin{document}
+
+\begin{frame}[t]
+
+\titlepage
+
+\end{frame}
+
+\begin{frame}[t]\frametitle{Table of Contents}
+
+\tableofcontents
+
+\end{frame}
+
+\section{Introduction} % (fold)
+\label{sec:introduction}
+
+\begin{frame}[t]\frametitle{Introduction}
+
+\begin{itemize}[<+->]
+    \item "Locus of Control is a generalizing trait describing the extent to which a person believes he or she has influence over his or her own life" \citep{specht2013}
+    \item \citet{heineck2010} find wage penalties for women and men with external locus of control
+    \item \citet{piatek2010} find that individuals with an internal LoC invest more in education
+    \item \citet{gallo2003} find that unemployment durations are lower for individuals with internal LoC
+\end{itemize}
+
+\note[item]{high sense of control means the person believes to have a strong impact on the things in their lives}
+\note[item]{needs to be distinguished from domain-specific control beliefs such as health loc or intellectual loc}
+\note[item]{heineck: interpretation is that if I do not think that I have influence on my labor market success I am not willing to exert more effort}
+
+\end{frame}
+
+% section introduction (end)
+
+\section{Data} % (fold)
+\label{sec:data}
+
+\begin{frame}[t]\frametitle{GSOEP}
+
+\begin{itemize}
+    \item data comes from the GSOEP version 32.1 (1984-2015)
+    \item includes about 16,000 households and 30,000 individuals
+    \item Locus of Control (LoC) is asked in 2005, 2010 and 2015 in the Personal
+  Questionnaire
+\end{itemize}
+
+\note[item]{also asked in 1999 on a four point scale}
+
+\end{frame}
+
+\begin{frame}[c]\frametitle{Locus of Control - Items}
+
+\begin{table}[H]\tiny
+    \begin{tabular}{p{1.5cm} p{8cm}}
+    \toprule
+    Question: & \textit{The following statements apply to different attitudes
+    towards life and the future. To what degree to you personally agree with
+    the following statements? Please answer according to the following scale: 1
+    means disagree completely, and 7 means agree completely.} \\
+    \midrule
+    1  & How my life goes depends on myself \\
+    2  & Compared to others, I haven't achieved what I deserved \\
+    3  & What one achieves in life is mainly a question of luck or fate \\
+    4  & If a person is socially or politically active, he/she can have an effect on social conditions \\
+    5  & I often have the experience that others make decisions regarding my life \\
+    6  & One has to work hard in order to succeed \\
+    7  & When I encounter difficulties, I have doubts about my abilities \\
+    8  & The opportunities I have in life are determined by social conditions \\
+    9  & Inborn abilities are more important than any efforts one can make \\
+    10 & I have little control over the things that happen in my life \\
+    \bottomrule
+    \end{tabular}
+    \caption{Locus of Control - Items, Source: GSOEP 2005, 2010, 2015}
+    \label{tab:loc_items}
+\end{table}
+
+\note[item]{scale range from 1 "disagree completely" to 7 "agree completely"}
+\note[item]{item 1 points to internal, item 10 to external}
+
+\end{frame}
+
+\begin{frame}[t]\frametitle{Locus of Control - Preparation}
+
+\begin{enumerate}[<+->]
+    \item recode items so that higher numbers indicate greater feeling of
+    control (e.g. item 10)
+    \item exclude items 4, 6 (relate to cultural attitudes) and 9 (ambiguous)
+    \item Cronbach's Alpha raises from 0.607 to 0.698 while moving from ten to
+    seven items
+    \item extract locus of control with factor analysis from the 2010 wave
+\end{enumerate}
+
+\note[item]{Cronbach's Alpha is the average correlation between the items corrected by Spearman-Brown formula}
+\note[item]{factor analysis requires observations to be iid, cannot use whole
+panel}
+\note[item]{use only 2010 instead, constant factor loadings, every individual
+is covered}
+
+\end{frame}
+
+\begin{frame}[c]\frametitle{Locus of Control - Explained Variance Ratio}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{../../out/figures/fig-fa-two-comp-explained-variance}
+    \caption{Factors obtained by factor analysis}
+    \label{fig:fa-ev}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}[c]\frametitle{Locus of Control - Factor Loadings}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{../../out/figures/fig-fa-factor-loadings}
+    \caption{Factor loadings of items}
+    \label{fig:fa-loadings}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}[c]\frametitle{Locus of Control - Distribution}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{../../out/figures/fig-stated-loc-fa}
+    \caption{Distribution of first factor of LoC for years 2005, 2010 and 2015}
+    \label{fig:stated-loc-dist}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}[c]\frametitle{Events}\tiny
+
+\begin{table}[H]
+    \caption{List of Negative Life Events}
+    \label{tab:negative_life_events}
+    \centering
+
+    \begin{tabular}{>{\quad}l}
+    \toprule
+    Questions\\
+    \midrule
+    \rule{0pt}{2.5ex}\rowgroup{\textit{Social Environment}} \\
+    Child has Disorder\\
+    Death of Child\\
+    Death of Father\\
+    Death of Household Person\\
+    Death of Mother\\
+    Death of Partner\\
+    Divorce\\
+    Household composition change\\
+    Separation\\
+    \rule{0pt}{2.5ex}\rowgroup{\textit{Economic Environment}} \\
+    Displacement\\
+    \rule{0pt}{2.5ex}\rowgroup{\textit{Health Environment}} \\
+    Legally Handicapped\\
+    Unplanned Pregnancy\\
+    \bottomrule
+    \end{tabular}
+\end{table}
+
+\note[item]{Regarding preparation, it was crucial to assign events to the correct period}
+\note[item]{Unplanned pregnancies and child disorders were assigned to beginning month of pregnancy and month of birth}
+\note[item]{Legally handicapped only captures jumps from 0 to 100 and is assigned to the interview month, wanted to capture severe health shocks as it is not only an amputated arm but also cancer}
+\note[item]{All other events can be attributed to a specific month}
+\note[item]{Displacement comes in two flavors, restricted to plant closure and displacement by employer}
+\note[item]{Not all events can be unambiguously categorized as negative, death of old relative with severe chronic illness, unplanned pregnancy, etc.}
+\note[item]{Controls are Age groups for decades, Marital status (single, in relationship), immigration status, employment status (employed, unemployed, other), education groups (five groups), log household income, gender}
+
+\end{frame}
+
+\begin{frame}[plain]
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth, height=\textheight]{../../out/figures/fig-event-count}
+    \caption{Number of events of individuals during 2005-2010 and 2010-2015}
+    \label{fig:event_count}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}[t]\frametitle{Mean Analysis}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{../../out/figures/fig-level-change-loc-event}
+    \caption{Average change in Locus of Control for events}
+    \label{fig:level_change_loc_event}
+\end{figure}
+
+\note[item]{Shows the average change in locus of control for each event in comparison with all other observations not experiencing the event.}
+
+\end{frame}
+
+% section data (end)
+
+
+\section{Estimation Strategy} % (fold)
+\label{sec:estimation_strategy}
+
+\begin{frame}[t]\frametitle{Estimation Strategy}
+	\begin{itemize}
+		\item<+-> dependent variable: change in locus of control
+		\item<+-> difference-in-difference analysis
+		\item<+-> specifications:
+		\begin{enumerate}
+			\item all negative life events
+			\item all negative life events apart from divorce and separation and only exogenous job losses
+			\item total number of traumata, total number of traumata squared
+		\end{enumerate}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}[t]\frametitle{Estimation Strategy}
+	\begin{itemize}
+		\item<+-> specification 1 + 2:\\
+			\begin{itemize}
+			\setlength{\itemsep}{20pt}
+			\item<+-> for all events apart from displacement (divorce, separation):\\
+			{\centering
+			\textit{eventdummy + eventdummy * time since occurrence}\\}
+			\item<+-> for displacement (divorce, separation):\\
+			{\centering
+			\textit{eventdummy + eventdummy * time since occurrence + eventdummy * status + eventdummy * status * time since occurrence}\\}
+
+		\begin{itemize}
+			\item status for displacement: employment status
+			\item status for divorce: marital status
+			\item status for separation: marital status
+		\end{itemize}
+			\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]\frametitle{Estimation Strategy}
+\begin{itemize}
+	\item all specifications:\\
+	\begin{itemize}
+		\setlength{\itemsep}{20pt}
+		\item controls: education, age, ln(hh income), employment status, migration status, gender, marital status
+		\item clustered standard errors on the individual level
+		\end{itemize}
+	\end{itemize}
+\end{frame}
+% section estimation_strategy (end)
+
+\section{Results} % (fold)
+\label{sec:results}
+
+\begin{frame}[plain] % plain
+\fontsize{5}{5}\selectfont
+\begin{table}
+	\input{reg_table_1.tex}
+\end{table}
+\end{frame}
+
+\begin{frame}[plain]
+\fontsize{5}{6}\selectfont
+\begin{table}
+	\input{../../out/tables/reg_table_2.tex}
+\end{table}
+\end{frame}
+
+\begin{frame}[t]\frametitle{Results}
+\fontsize{6}{6}\selectfont
+\begin{table}
+\input{../../out/tables/reg_table_3.tex}
+\end{table}
+\fontsize{11}{9}\selectfont
+\begin{itemize}
+	\item<+-> no significant effect of the overall number of events
+	\item<+-> none of the events changes the locus of control significantly
+\end{itemize}
+\end{frame}
+
+% section results
+
+
+\section{Extensions} % (fold)
+\label{sec:extensions}
+
+\subsection{Internal vs. External Types} % (fold)
+\label{sub:internal_vs_external_types}
+\begin{frame}[t]\frametitle{Extensions}
+\textbf{Internal vs. External Types}
+\begin{itemize}
+	\item<+-> \citet{buddelmeyer2016}: insurance effect of internal locus of control against emotional pain
+	\item<+-> compare effects of traumata on locus of control between internals and externals
+	\item<+-> steps:
+	\begin{enumerate}
+		\item split sample by median locus of control, categorize individuals as externals and internals
+		\item run previous regression with dummy for locus of control type and interaction terms between type and events
+		\end{enumerate}
+	\end{itemize}
+\end{frame}
+
+\subsection{Time Effects} % (fold)
+\label{sub:time_effects}
+\begin{frame}[t]\frametitle{Extensions}
+\textbf{Time Effects}
+\begin{itemize}
+	\item<+-> two possible channels of effect of time since occurrence
+	\item<+-> steps to test for diminished or increased effects over time:
+	\begin{enumerate}
+		\item restrict sample
+		\item split continous time variable into dummies such that each dummy covers a twelve months interval
+		\item run regression by interacting all events with time dummies
+	\end{enumerate}
+\end{itemize}
+\end{frame}
+
+\subsection{Age Effects and Positive Events} % (fold)
+\label{sub:age_effects_positive_events}
+\begin{frame}[t]\frametitle{Extensions}
+\textbf{Age Effects and Positive Events}
+\begin{itemize}
+	\item<+-> age periods in which locus of control is more stable than in other periods
+	\begin{itemize}
+		\item compare effects of traumatic events between different age groups
+	\end{itemize}
+	\item<+-> investigate effect of positive events
+	\end{itemize}
+\end{frame}
+
+\subsection{Common Trend Assumption} % (fold)
+\label{sub:common_trend_assumption}
+
+\begin{frame}[t]\frametitle{Extensions}
+
+\textbf{Common Trend Assumption}
+\begin{itemize}[<+->]
+    \item In absence of treatment, control and treatment group would follow the same trend
+    \item \citet{autor2003}: Include leads and lags dummy variables
+    \item If leads are significant, common trend assumption has to be rejected
+\end{itemize}
+
+\end{frame}
+% subsection common_trend_assumption (end)
+
+% section extensions (end)
+
+\begin{frame}[t]\frametitle{References}
+
+\printbibliography
+
+\end{frame}
+
+\begin{frame}[plain, c]
+
+\centering
+Thank you for your attention!
+
+\end{frame}
+
+\bgroup
+\setbeamercolor{background canvas}{bg=black}
+\begin{frame}[plain]{}
+\end{frame}
+\egroup
+
+\end{document}

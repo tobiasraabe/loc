@@ -31,7 +31,7 @@ def main(df):
     # Fit the FactorAnalysis on the 2010 data first.
     fa = Pipeline(steps=[
         # ('std', StandardScaler()),
-        ('fa', FactorAnalysis(max_iter=10000))
+        ('fa', FactorAnalysis(max_iter=10000, svd_method='lapack'))
     ])
 
     # Fit the FactorAnalysis on the 2010 data
@@ -67,6 +67,12 @@ def main(df):
     df.sort_values(['ID', 'YEAR'], axis='rows', inplace=True)
     df['FIRST_FACTOR_DELTA'] = df.groupby(
         'ID')['FIRST_FACTOR'].transform(pd.Series.diff)
+
+    # Test that the highest value in the LoC scores is connected to the highest
+    # score on the first factor. This means that higher first factor indicate
+    # more internal LoC.
+    assert (df.loc[df.LOC_INDEX == df.LOC_INDEX.max(), 'FIRST_FACTOR'] ==
+            df.FIRST_FACTOR.max()).all(), 'LoC is reversed!'
 
     # Save the LoC variables with the two axes as a pickle file.
     df.to_pickle(ppj('OUT_DATA', 'loc_fa.pkl'))

@@ -4,7 +4,6 @@ import pandas as pd
 from bld.project_paths import project_paths_join as ppj
 import matplotlib.pyplot as plt
 import statsmodels.formula.api as smf
-import numpy as np
 
 EVENT_VARIABLES = ['CHILD_DISORDER', 'DEATH_CHILD', 'DEATH_FATHER',
                    'DEATH_HH_PERSON', 'DEATH_MOTHER', 'DEATH_PARTNER',
@@ -64,7 +63,7 @@ def create_graph(table):
 
     table.iloc[:, :2].plot.bar(rot=70, ax=ax)
 
-    ax.set_ylabel('$\Delta$ Stated locus of control')
+    ax.set_ylabel('$\Delta$ Locus of Control')
 
     ax.legend()
 
