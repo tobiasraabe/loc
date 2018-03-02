@@ -30,9 +30,16 @@ If you want to delete all files in the ``build/`` folder, run
 
         $ python waf.py distclean
 
+To run the test suite, type
 
-[Todo](TODO.md)
----------------
+    $ tox
+
+or to run specific tests described in ``tox.ini`` under ``envlist`` run
+
+    $ tox -e <env_name>
+
+This will run ``pytest`` for checking the implementation and produce a coverage
+report, perform linting on documentation (``doc8``) and code (``flake8``).
 
 
 Additional resources

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from shutil import copyfile
+from pathlib import Path
 
 
 def build(ctx):
@@ -8,7 +8,17 @@ def build(ctx):
 
     # Copies the matplotlibrc file to the build directory. This file can be
     # used to make persistent customization to figures.
-    copyfile('src/figures/matplotlibrc', 'bld/matplotlibrc')
+    # WARNING: Notice within the ``ctx(..)``, paths are relative to ``bld``
+    # whereas in the ``build(...)``, they are relative to the ``wscript``.
+    path_in = Path('..', 'src', 'figures', 'matplotlibrc')
+    path_out = Path('matplotlibrc')
+
+    ctx(
+        rule=f'copy {str(path_in)} {str(path_out)}',
+        deps=ctx.path_to(ctx, 'IN_FIGURES', path_in.name),
+        target=ctx.path_to(ctx, 'OUT', path_in.name),
+        name=f'copy_{path_in.stem}',
+    )
 
     for decomposition in ['fa', 'pca']:
         for model_type in ['ten_comp', 'two_comp']:
