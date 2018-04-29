@@ -69,6 +69,6 @@ def build(ctx):
         features='run_py_script',
         source='fig-event-count.py',
         deps=ctx.path_to(ctx, 'OUT_DATA', 'panel.pkl'),
-        target=ctx.path_to(ctx, 'OUT_FIGURES', 'fig-events-count.png'),
-        name='fig_events_count',
+        target=ctx.path_to(ctx, 'OUT_FIGURES', 'fig-event-count.png'),
+        name='fig_event_count',
     )
