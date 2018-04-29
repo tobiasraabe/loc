@@ -15,6 +15,8 @@ def set_project_paths(ctx):
     pp = {}
     pp['PROJECT_ROOT'] = '.'
     pp['IN_DATA'] = 'src/data'
+    pp['IN_FIGURES'] = 'src/figures'
+    pp['OUT'] = '{}'.format(out)
     pp['OUT_DATA'] = '{}/out/data'.format(out)
     pp['OUT_ANALYSIS'] = '{}/out/analysis'.format(out)
     pp['OUT_FIGURES'] = '{}/out/figures'.format(out)
