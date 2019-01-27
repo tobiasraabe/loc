@@ -1,27 +1,23 @@
-#! python
-
-
 import os
 
-
 # The project root directory and the build directory.
-top = '.'
-out = 'bld'
+top = "."
+out = "bld"
 
 
 def set_project_paths(ctx):
     """Return a dictionary with project paths represented by Waf nodes."""
 
     pp = {}
-    pp['PROJECT_ROOT'] = '.'
-    pp['IN_DATA'] = 'src/data'
-    pp['IN_FIGURES'] = 'src/figures'
-    pp['OUT'] = '{}'.format(out)
-    pp['OUT_DATA'] = '{}/out/data'.format(out)
-    pp['OUT_ANALYSIS'] = '{}/out/analysis'.format(out)
-    pp['OUT_FIGURES'] = '{}/out/figures'.format(out)
-    pp['OUT_TABLES'] = '{}/out/tables'.format(out)
-    pp['OUT_ANALYSIS'] = '{}/out/analysis'.format(out)
+    pp["PROJECT_ROOT"] = "."
+    pp["IN_DATA"] = "src/data"
+    pp["IN_FIGURES"] = "src/figures"
+    pp["OUT"] = f"{out}"
+    pp["OUT_DATA"] = f"{out}/out/data"
+    pp["OUT_ANALYSIS"] = f"{out}/out/analysis"
+    pp["OUT_FIGURES"] = f"{out}/out/figures"
+    pp["OUT_TABLES"] = f"{out}/out/tables"
+    pp["OUT_ANALYSIS"] = f"{out}/out/analysis"
 
     # Convert the directories into Waf nodes.
     for key, val in pp.items():
@@ -46,7 +42,7 @@ def path_to(ctx, pp_key, *args):
     # Implementation detail:
     #   We find the path to the directory where the file lives, so that
     #   we do not accidentally declare a node that does not exist.
-    dir_path_in_tree = os.path.join('.', *args[:-1])
+    dir_path_in_tree = os.path.join(".", *args[:-1])
     # Find/declare the directory node. Use an alias to shorten the line.
     pp_key_fod = ctx.env.PROJECT_PATHS[pp_key].find_or_declare
     dir_node = pp_key_fod(dir_path_in_tree).get_src()
@@ -59,17 +55,18 @@ def path_to(ctx, pp_key, *args):
 def configure(ctx):
     ctx.env.PYTHONPATH = os.getcwd()
     # Disable on a machine where security risks could arise
-    ctx.env.PDFLATEXFLAGS = '-shell-escape'
-    ctx.load('biber')
-    ctx.load('run_py_script')
-    ctx.load('sphinx_build')
-    ctx.load('write_project_headers')
+    ctx.env.PDFLATEXFLAGS = "-shell-escape"
+    ctx.load("biber")
+    ctx.load("run_py_script")
+    ctx.load("sphinx_build")
+    ctx.load("write_project_headers")
+    ctx.find_program("dot")
 
 
 def build(ctx):
     ctx.env.PROJECT_PATHS = set_project_paths(ctx)
     ctx.path_to = path_to
     # Generate header file with project paths in 'bld' directory
-    ctx(features='write_project_paths', target='project_paths.py')
+    ctx(features="write_project_paths", target="project_paths.py")
     ctx.add_group()
-    ctx.recurse('src')
+    ctx.recurse("src")

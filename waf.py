@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # Thomas Nagy, 2005-2016
-
 """
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions
@@ -28,19 +27,19 @@ STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
 IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 """
-
 import os
 import sys
 
-VERSION = '1.9.5'
+VERSION = "2.0.8"
 cwd = os.getcwd()
 join = os.path.join
 
 name = sys.argv[0]
 base = os.path.dirname(os.path.abspath(name))
-wafdir = join(base, '.mywaflib')
+wafdir = join(base, ".mywaflib")
 sys.path.insert(0, wafdir)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     from waflib import Scripting
+
     Scripting.waf_entry_point(cwd, VERSION, wafdir)

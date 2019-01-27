@@ -1,50 +1,64 @@
-#! python
-
-
-EVENT_VARIABLES = ['CHILD_DISORDER', 'DEATH_CHILD', 'DEATH_FATHER',
-                   'DEATH_HH_PERSON', 'DEATH_MOTHER', 'DEATH_PARTNER',
-                   'DIVORCED', 'HH_COMP_CHANGE', 'LAST_JOB_ENDED',
-                   'LAST_JOB_ENDED_LIMITED', 'LEGALLY_HANDICAPPED_PERC',
-                   'PREGNANCY_UNPLANNED', 'SEPARATED']
+EVENT_VARIABLES = [
+    "CHILD_DISORDER",
+    "DEATH_CHILD",
+    "DEATH_FATHER",
+    "DEATH_HH_PERSON",
+    "DEATH_MOTHER",
+    "DEATH_PARTNER",
+    "DIVORCED",
+    "HH_COMP_CHANGE",
+    "LAST_JOB_ENDED",
+    "LAST_JOB_ENDED_LIMITED",
+    "LEGALLY_HANDICAPPED_PERC",
+    "PREGNANCY_UNPLANNED",
+    "SEPARATED",
+]
 
 
 def build(ctx):
 
     ctx(
-        features='run_py_script',
-        source='create_panel_descriptives.py',
-        deps=[ctx.path_to(ctx, 'OUT_DATA', 'panel_2005_2010_inspection.pkl'),
-              ctx.path_to(ctx, 'OUT_DATA', 'panel_2010_2015_inspection.pkl'),
-              ctx.path_to(ctx, 'OUT_DATA', 'panel.pkl')],
-        target=[
-            ctx.path_to(
-                ctx, 'OUT_TABLES', 'panel_descriptives_numbers.json')] + [
-            ctx.path_to(ctx, 'OUT_TABLES',
-                f'tab-panel-descriptive-statistics-{event.replace("_", "-").lower()}.tex')
-            for event in EVENT_VARIABLES],
-        name='create_panel_descriptives'
-    )
-
-    ctx(
-        features='run_py_script',
-        source='panel_reg.py',
+        features="run_py_script",
+        source="create_panel_descriptives.py",
         deps=[
-            ctx.path_to(ctx, 'OUT_DATA', 'loc_fa.pkl'),
-            ctx.path_to(ctx, 'OUT_DATA', 'panel.pkl'),
+            ctx.path_to(ctx, "OUT_DATA", "panel_2005_2010_inspection.pkl"),
+            ctx.path_to(ctx, "OUT_DATA", "panel_2010_2015_inspection.pkl"),
+            ctx.path_to(ctx, "OUT_DATA", "panel.pkl"),
         ],
-        target=ctx.path_to(ctx, 'OUT_ANALYSIS', 'panel_reg.pkl'),
-        name='panel_reg'
+        target=[ctx.path_to(ctx, "OUT_TABLES", "panel_descriptives_numbers.json")]
+        + [
+            ctx.path_to(
+                ctx,
+                "OUT_TABLES",
+                "tab-panel-descriptive-statistics-{}.tex".format(
+                    event.replace("_", "-").lower()
+                ),
+            )
+            for event in EVENT_VARIABLES
+        ],
+        name="create_panel_descriptives",
     )
 
     ctx(
-        features='run_py_script',
-        source='reg.py',
-        deps=ctx.path_to(ctx, 'OUT_ANALYSIS', 'panel_reg.pkl'),
-        target=[
-            ctx.path_to(ctx, 'OUT_TABLES', 'reg_table_1.tex'),
-            ctx.path_to(ctx, 'OUT_TABLES', 'reg_table_2.tex'),
-            ctx.path_to(ctx, 'OUT_TABLES', 'reg_table_3.tex'),
-            ctx.path_to(ctx, 'OUT_TABLES', 'reg_table_4.tex'),
+        features="run_py_script",
+        source="panel_reg.py",
+        deps=[
+            ctx.path_to(ctx, "OUT_DATA", "loc_fa.pkl"),
+            ctx.path_to(ctx, "OUT_DATA", "panel.pkl"),
         ],
-        name='reg_tables'
+        target=ctx.path_to(ctx, "OUT_ANALYSIS", "panel_reg.pkl"),
+        name="panel_reg",
+    )
+
+    ctx(
+        features="run_py_script",
+        source="reg.py",
+        deps=ctx.path_to(ctx, "OUT_ANALYSIS", "panel_reg.pkl"),
+        target=[
+            ctx.path_to(ctx, "OUT_TABLES", "reg_table_1.tex"),
+            ctx.path_to(ctx, "OUT_TABLES", "reg_table_2.tex"),
+            ctx.path_to(ctx, "OUT_TABLES", "reg_table_3.tex"),
+            ctx.path_to(ctx, "OUT_TABLES", "reg_table_4.tex"),
+        ],
+        name="reg_tables",
     )

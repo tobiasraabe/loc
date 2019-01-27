@@ -1,74 +1,65 @@
-#!/usr/bin/env python
-
-from pathlib import Path
-
-
 def build(ctx):
-    """Runs necessary steps before everything else."""
-
-    # Copies the matplotlibrc file to the build directory. This file can be
-    # used to make persistent customization to figures.
-    # WARNING: Notice within the ``ctx(..)``, paths are relative to ``bld``
-    # whereas in the ``build(...)``, they are relative to the ``wscript``.
-    path_in = Path('..', 'src', 'figures', 'matplotlibrc')
-    path_out = Path('matplotlibrc')
 
     ctx(
-        rule=f'copy {str(path_in)} {str(path_out)}',
-        deps=ctx.path_to(ctx, 'IN_FIGURES', path_in.name),
-        target=ctx.path_to(ctx, 'OUT', path_in.name),
-        name=f'copy_{path_in.stem}',
+        features="subst",
+        source=ctx.path_to(ctx, "IN_FIGURES", "matplotlibrc"),
+        target=ctx.path_to(ctx, "OUT", "matplotlibrc"),
+        is_copy=True,
     )
 
-    for decomposition in ['fa', 'pca']:
-        for model_type in ['ten_comp', 'two_comp']:
-            name = model_type.replace('_', '-')
+    for decomposition in ["fa", "pca"]:
+        for model_type in ["ten_comp", "two_comp"]:
+            name = model_type.replace("_", "-")
 
             ctx(
-                features='run_py_script',
-                source=f'fig-{decomposition}-explained-variance.py',
+                features="run_py_script",
+                source=f"fig-{decomposition}-explained-variance.py",
                 deps=ctx.path_to(
-                    ctx, 'OUT_DATA',
-                    f'model_{decomposition}_{model_type}.pkl'),
+                    ctx, "OUT_DATA", f"model_{decomposition}_{model_type}.pkl"
+                ),
                 target=ctx.path_to(
-                    ctx, 'OUT_FIGURES',
-                    f'fig-{decomposition}-{name}-explained-variance.png'),
+                    ctx,
+                    "OUT_FIGURES",
+                    f"fig-{decomposition}-{name}-explained-variance.png",
+                ),
                 append=model_type,
-                name=f'{decomposition}_{model_type}',
+                name=f"{decomposition}_{model_type}",
             )
 
         ctx(
-            features='run_py_script',
-            source='fig-stated-loc-distribution.py',
-            deps=ctx.path_to(ctx, 'OUT_DATA', f'loc_{decomposition}.pkl'),
+            features="run_py_script",
+            source="fig-stated-loc-distribution.py",
+            deps=ctx.path_to(ctx, "OUT_DATA", f"loc_{decomposition}.pkl"),
             target=ctx.path_to(
-                ctx, 'OUT_FIGURES', f'fig-stated-loc-{decomposition}.png'),
+                ctx, "OUT_FIGURES", f"fig-stated-loc-{decomposition}.png"
+            ),
             append=decomposition,
-            name=f'stated_loc_{decomposition}',
+            name=f"stated_loc_{decomposition}",
         )
 
     ctx(
-        features='run_py_script',
-        source='fig-level-change-loc-event.py',
-        deps=[ctx.path_to(ctx, 'OUT_DATA', 'loc_fa.pkl'),
-              ctx.path_to(ctx, 'OUT_DATA', 'panel.pkl')],
-        target=ctx.path_to(ctx, 'OUT_FIGURES',
-                           'fig-level-change-loc-event.png'),
-        name='level_change_loc',
+        features="run_py_script",
+        source="fig-level-change-loc-event.py",
+        deps=[
+            ctx.path_to(ctx, "OUT_DATA", "loc_fa.pkl"),
+            ctx.path_to(ctx, "OUT_DATA", "panel.pkl"),
+        ],
+        target=ctx.path_to(ctx, "OUT_FIGURES", "fig-level-change-loc-event.png"),
+        name="level_change_loc",
     )
 
     ctx(
-        features='run_py_script',
-        source='fig-fa-factor-loadings.py',
-        deps=ctx.path_to(ctx, 'OUT_DATA', 'fa_loadings.pkl'),
-        target=ctx.path_to(ctx, 'OUT_FIGURES', 'fig-fa-factor-loadings.png'),
-        name='level_change_loc',
+        features="run_py_script",
+        source="fig-fa-factor-loadings.py",
+        deps=ctx.path_to(ctx, "OUT_DATA", "fa_loadings.pkl"),
+        target=ctx.path_to(ctx, "OUT_FIGURES", "fig-fa-factor-loadings.png"),
+        name="level_change_loc",
     )
 
     ctx(
-        features='run_py_script',
-        source='fig-event-count.py',
-        deps=ctx.path_to(ctx, 'OUT_DATA', 'panel.pkl'),
-        target=ctx.path_to(ctx, 'OUT_FIGURES', 'fig-event-count.png'),
-        name='fig_event_count',
+        features="run_py_script",
+        source="fig-event-count.py",
+        deps=ctx.path_to(ctx, "OUT_DATA", "panel.pkl"),
+        target=ctx.path_to(ctx, "OUT_FIGURES", "fig-event-count.png"),
+        name="fig_event_count",
     )
