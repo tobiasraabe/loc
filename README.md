@@ -1,10 +1,14 @@
 Malleability of Locus of Control by Traumatic Events
 ====================================================
 
+[![Build Status](https://travis-ci.com/tobiasraabe/locus-of-control.svg?branch=master)](https://travis-ci.com/tobiasraabe/locus-of-control)
+[![Updates](https://pyup.io/repos/github/tobiasraabe/locus-of-control/shield.svg)](https://pyup.io/repos/github/tobiasraabe/locus-of-control)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 Getting started
 ---------------
 
-All you need to build the project is an Anaconda Distribution with Python 3.6.
+All you need to build the project is an Anaconda Distribution with Python 3.7.
 Some packages might show up as not installed. Add them with ``pip install
 name`` and rerun the building process until everything works.
 
@@ -40,12 +44,3 @@ or to run specific tests described in ``tox.ini`` under ``envlist`` run
 
 This will run ``pytest`` for checking the implementation and produce a coverage
 report, perform linting on documentation (``doc8``) and code (``flake8``).
-
-
-Additional resources
---------------------
-
-- [statsmodels tutorial on formulas](http://www.statsmodels.org/dev/example_formulas.html)
-- [statsmodels tutorial on standard errors](http://www.vincentgregoire.com/standard-errors-in-python/)
-- [PCA tutorial](https://jakevdp.github.io/PythonDataScienceHandbook/05.09-principal-component-analysis.html)
-- [Python Data Science Handbook](https://jakevdp.github.io/PythonDataScienceHandbook/)
