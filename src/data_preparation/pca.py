@@ -1,11 +1,11 @@
 import numpy as np
 import pandas as pd
-from bld.project_paths import project_paths_join as ppj
 from sklearn.decomposition import PCA
 from sklearn.externals import joblib
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 
+from bld.project_paths import project_paths_join as ppj
 from src import LOC_PERCEIVED_CONTROL
 
 

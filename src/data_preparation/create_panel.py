@@ -1,13 +1,13 @@
 """This module creates the panel data set from the SOEP data files."""
 import calendar
 import datetime
-import logging
 from collections import OrderedDict
 
 import numpy as np
 import pandas as pd
-from bld.project_paths import project_paths_join as ppj
 from dateutil.relativedelta import relativedelta
+
+from bld.project_paths import project_paths_join as ppj
 
 
 EVENT_VARIABLES = [
@@ -137,34 +137,6 @@ def calculate_time_difference_between_event_int(x, event, end_year_interview):
         return np.nan
 
 
-def assert_same_number_of_observations(func):
-    """This decorator ensures that the number of observations does not change
-    by this transformation of the dataframe."""
-
-    def wrapper(*args, **kwargs):
-        num_obs_before_transformation = df.shape[0]
-        transformed_df = func(*args, **kwargs)
-
-        num_obs_after_transformation = transformed_df.shape[0]
-        assert num_obs_before_transformation == num_obs_after_transformation
-
-        return transformed_df
-
-    return wrapper
-
-
-def report_shape_of_dataframe(func):
-    def wrapper(*args, **kwargs):
-        transformed_df = func(*args, **kwargs)
-
-        shape = transformed_df.shape
-        logging.info(f"Shape is now: {shape}.")
-
-        return transformed_df
-
-    return wrapper
-
-
 def fill_with_mode(x):
     try:
         return x.value_counts().index[0]
@@ -236,15 +208,17 @@ def create_panel():
     # Select only observations which are in one of the two ranges, 2005-2010 or
     # 2010-2015, and which are complete, meaning having 6 observations for one
     # range or 11 for two.
+
     # First, create variables to indicate complete ranges
     df["YEAR_2005_2010"] = df.YEAR.isin([2005, 2006, 2007, 2008, 2009, 2010])
     df["YEAR_2005_2010_SUM"] = df.groupby("ID").YEAR_2005_2010.transform(sum)
     df["YEAR_2010_2015"] = df.YEAR.isin([2010, 2011, 2012, 2013, 2014, 2015])
     df["YEAR_2010_2015_SUM"] = df.groupby("ID").YEAR_2010_2015.transform(sum)
+
     # Select only valid years when range is complete
     df = df.loc[
-        (df.YEAR_2005_2010 & (df.YEAR_2005_2010_SUM == 6))
-        | (df.YEAR_2010_2015 & (df.YEAR_2010_2015_SUM == 6))
+        (df.YEAR_2005_2010 & df.YEAR_2005_2010_SUM.eq(6))
+        | (df.YEAR_2010_2015 & df.YEAR_2010_2015_SUM.eq(6))
     ]
     # Test that for each individual, there are only 6 or 11 possible
     # observations. There are 6 if individuals are only observed over one
@@ -255,8 +229,6 @@ def create_panel():
     return df
 
 
-@report_shape_of_dataframe
-@assert_same_number_of_observations
 def clean_common_variables(df):
     # BIRTH_YEAR
     # Replace -5 with np.nan
@@ -382,8 +354,6 @@ def clean_common_variables(df):
     return df
 
 
-@report_shape_of_dataframe
-@assert_same_number_of_observations
 def merge_with_edu_groups(df):
     # Load dataset
     edu_groups = pd.read_pickle(ppj("OUT_DATA", "edu_groups.pkl"))
@@ -393,8 +363,6 @@ def merge_with_edu_groups(df):
     return df
 
 
-@report_shape_of_dataframe
-@assert_same_number_of_observations
 def merge_with_edu_years(df):
     # Load dataset
     edu_years = pd.read_pickle(ppj("OUT_DATA", "edu_years.pkl"))
@@ -404,8 +372,6 @@ def merge_with_edu_years(df):
     return df
 
 
-@report_shape_of_dataframe
-@assert_same_number_of_observations
 def merge_with_hh_inc(df):
     # Load dataset
     hh_inc = pd.read_pickle(ppj("OUT_DATA", "hh_inc.pkl"))
@@ -415,8 +381,6 @@ def merge_with_hh_inc(df):
     return df
 
 
-@report_shape_of_dataframe
-@assert_same_number_of_observations
 def merge_with_migration(df):
     # Load dataset
     mig = pd.read_pickle(ppj("OUT_DATA", "migration.pkl"))
@@ -426,8 +390,6 @@ def merge_with_migration(df):
     return df
 
 
-@report_shape_of_dataframe
-@assert_same_number_of_observations
 def extract_loc(df):
     # Copy loc dataframe and drop columns in other frame
     loc = df.loc[
@@ -442,8 +404,6 @@ def extract_loc(df):
     return df
 
 
-@report_shape_of_dataframe
-@assert_same_number_of_observations
 def merge_with_preg_dis(df):
     # Load other datasets
     preg = pd.read_pickle(ppj("OUT_DATA", "preg.pkl"))
@@ -470,7 +430,6 @@ def merge_with_preg_dis(df):
     return df
 
 
-@report_shape_of_dataframe
 def clean_event_variables(df):
 
     for var in EVENT_VARIABLES:
@@ -514,9 +473,9 @@ def clean_event_variables(df):
                 MONTH_DICT.values(), ordered=True, inplace=True
             )
 
-        # Create variable whether var was before the interview to determine
-        # timing. Note that, cases where the months of the event and interview
-        # coincide are flagged as False.
+        # Create variable whether var was before the interview to determine timing. Note
+        # that, cases where the months of the event and interview coincide are flagged
+        # as False.
         if var in ["LAST_JOB_ENDED_LIMITED"]:
             pass
         else:
@@ -524,9 +483,9 @@ def clean_event_variables(df):
                 df[var + "_MONTH"] < df.INT_MONTH
             )
 
-        # There are some cases in which interview and var coincide. An event
-        # happened before the interview if MOTHER_PREGNANT_AT_PQ_YEAR is the
-        # same as the survey year.
+        # There are some cases in which interview and var coincide. An event happened
+        # before the interview if MOTHER_PREGNANT_AT_PQ_YEAR is the same as the survey
+        # year.
         if var in ["CHILD_DISORDER", "PREGNANCY_UNPLANNED"]:
             df.loc[
                 (df.INT_MONTH == df[var + "_MONTH"])
@@ -537,10 +496,9 @@ def clean_event_variables(df):
         # This variables do not need to be adjusted.
         elif var in ["LEGALLY_HANDICAPPED_PERC", "LAST_JOB_ENDED_LIMITED"]:
             pass
-        # There are some cases in which interview and var coincide. An event
-        # happened before the interview if var_MONTH_SY is not NaN. The
-        # opposite case if var_MONTH_SY is NaN is already flagged as false due
-        # to the previous step
+        # There are some cases in which interview and var coincide. An event happened
+        # before the interview if var_MONTH_SY is not NaN. The opposite case if
+        # var_MONTH_SY is NaN is already flagged as false due to the previous step
         else:
             df.loc[
                 (df[var + "_MONTH"] == df.INT_MONTH) & df[var + "_MONTH_SY"].notnull(),
@@ -549,12 +507,11 @@ def clean_event_variables(df):
 
     # Save for exploration
     df.to_pickle(ppj("OUT_DATA", "panel_inspection_2.pkl"))
-    # Separate the sample in the two periods, 2005-2010 and 2010-2015. We
-    # cannot simply use years from 2010-2015 for the second period, because
-    # there would exist overhanging observations which have only a complete
-    # history over the first period.
-    df_2005_2010 = df.loc[df.YEAR_2005_2010 & (df.YEAR_2005_2010_SUM == 6)].copy()
-    df_2010_2015 = df.loc[df.YEAR_2010_2015 & (df.YEAR_2010_2015_SUM == 6)].copy()
+    # Separate the sample in the two periods, 2005-2010 and 2010-2015. We cannot simply
+    # use years from 2010-2015 for the second period, because there would exist
+    # overhanging observations which have only a complete history over the first period.
+    df_2005_2010 = df.loc[df.YEAR_2005_2010 & df.YEAR_2005_2010_SUM.eq(6)].copy()
+    df_2010_2015 = df.loc[df.YEAR_2010_2015 & df.YEAR_2010_2015_SUM.eq(6)].copy()
 
     # Delete events which are not occurring in the specific periods
     for var in EVENT_VARIABLES:
@@ -584,13 +541,12 @@ def clean_event_variables(df):
                 var + "_MONTH",
             ] = np.nan
 
-    # When looking at LAST_JOB_ENDED, we are using two specification. In the
-    # first, we consider every kind of job loss. In the second step and as
-    # Preuss, Hennecke (2017), we focus on displacement by employer and plant
-    # closure. Therefore, we will delete every other instances of job loss from
-    # LAST_JOB_ENDED_LIMITED_MONTH. As all categories are eliminated from
-    # REASON_JOB_TERMINATED which are not valid by the considerations of
-    # Preuss, Hennecke (2017), we can eliminate all job losses where
+    # When looking at LAST_JOB_ENDED, we are using two specification. In the first, we
+    # consider every kind of job loss. In the second step and as Preuss, Hennecke
+    # (2017), we focus on displacement by employer and plant closure. Therefore, we will
+    # delete every other instances of job loss from LAST_JOB_ENDED_LIMITED_MONTH. As all
+    # categories are eliminated from REASON_JOB_TERMINATED which are not valid by the
+    # considerations of Preuss, Hennecke (2017), we can eliminate all job losses where
     # REASON_JOB_TERMINATED and REASON_JOB_TERMINATED_SHIFTED are NaN.
     df_2005_2010["LAST_JOB_ENDED_LIMITED_MONTH"] = df_2005_2010.LAST_JOB_ENDED_MONTH
     df_2005_2010.loc[
@@ -605,16 +561,15 @@ def clean_event_variables(df):
         "LAST_JOB_ENDED_LIMITED_MONTH",
     ] = np.nan
 
-    # Create event identifiers, ongoing counts of current events and ongoing
-    # counts of previous events.
+    # Create event identifiers, ongoing counts of current events and ongoing counts of
+    # previous events.
     for df in [df_2005_2010, df_2010_2015]:
         for var in EVENT_VARIABLES:
             # Create event identifier
             df.loc[df[var + "_MONTH"].notnull(), "EVENT_" + var] = True
-            # Create ongoing count of events per period
-            # astype(float) to convert True to 1.0, cumsum to count, ffill to
-            # to overwrite NaNs in following columns with previous values,
-            # fillna(0) to convert NaNs at the beginning to zeros.
+            # Create ongoing count of events per period astype(float) to convert True to
+            # 1.0, cumsum to count, ffill to to overwrite NaNs in following columns with
+            # previous values, fillna(0) to convert NaNs at the beginning to zeros.
             df["EVENT_" + var + "_COUNT"] = df.groupby("ID")["EVENT_" + var].transform(
                 lambda x: x.astype(float).cumsum().fillna(method="ffill").fillna(0)
             )
@@ -623,10 +578,10 @@ def clean_event_variables(df):
                 df["EVENT_" + var + "_COUNT"] - 1
             ).clip(lower=0)
 
-    # Now, we want to calculate the monthly difference of an event to the next
-    # LOC interview in 2010 or 2015. First, we need to assign the month of the
-    # next LOC interview to each observation by extracting the interview month
-    # in 2010, 2015 and merging the series by IDs.
+    # Now, we want to calculate the monthly difference of an event to the next LOC
+    # interview in 2010 or 2015. First, we need to assign the month of the next LOC
+    # interview to each observation by extracting the interview month in 2010, 2015 and
+    # merging the series by IDs.
     int_month_2010 = df_2005_2010.loc[
         df_2005_2010.YEAR == 2010, ["ID", "INT_MONTH"]
     ].copy()
@@ -640,8 +595,8 @@ def clean_event_variables(df):
     df_2010_2015 = df_2010_2015.merge(
         int_month_2015, how="left", on="ID", suffixes=("", "_2015")
     )
-    # Calculate time difference for each event to the next interview month in
-    # 2010 or 2015 and assign values to EVENT_var_TIME_DIFF
+    # Calculate time difference for each event to the next interview month in 2010 or
+    # 2015 and assign values to EVENT_var_TIME_DIFF
     for var in EVENT_VARIABLES:
         df_2005_2010["EVENT_" + var + "_TIME_DIFF"] = df_2005_2010.apply(
             calculate_time_difference_between_event_int, args=(var, 2010), axis=1
@@ -649,11 +604,10 @@ def clean_event_variables(df):
         df_2010_2015["EVENT_" + var + "_TIME_DIFF"] = df_2010_2015.apply(
             calculate_time_difference_between_event_int, args=(var, 2015), axis=1
         )
-        # At last, we propagate previous values to the next period if there is
-        # a NaN. This means that the last value of EVENT_var_TIME_DIFF per ID
-        # in 2010 or 2015 contains the time difference in months to the last
-        # event. I do not know how to handle multiple durations. All other NaNs
-        # will be filled with -1.
+        # At last, we propagate previous values to the next period if there is a NaN.
+        # This means that the last value of EVENT_var_TIME_DIFF per ID in 2010 or 2015
+        # contains the time difference in months to the last event. I do not know how to
+        # handle multiple durations. All other NaNs will be filled with -1.
         df_2005_2010["EVENT_" + var + "_TIME_DIFF"] = df_2005_2010.groupby("ID")[
             "EVENT_" + var + "_TIME_DIFF"
         ].transform(lambda x: x.fillna(method="ffill").fillna(-1))
@@ -676,9 +630,7 @@ def clean_event_variables(df):
     return df_appended
 
 
-@report_shape_of_dataframe
 def drop_unused_columns_and_observations(df):
-    # Drop columns
     unused_columns = []
     unused_columns += [
         "YEAR_2005_2010",
@@ -712,13 +664,13 @@ def drop_unused_columns_and_observations(df):
     df.MARITAL_STATUS = df.MARITAL_STATUS.astype("category")
     df.EMPLOYMENT_STATUS = df.EMPLOYMENT_STATUS.astype("category")
     df.EDUCATION_GROUPS_ISCED97 = df.EDUCATION_GROUPS_ISCED97.astype("category")
-    # Sort values
+
     df.sort_values(["ID", "YEAR"], axis="rows", inplace=True)
 
     return df
 
 
-if __name__ == "__main__":
+def main():
     # Create a unaggregated panel from 2005 to 2015
     df = create_panel()
     # Clean common variables
@@ -743,3 +695,7 @@ if __name__ == "__main__":
     df = drop_unused_columns_and_observations(df)
     # Save the current dataframe
     df.to_pickle(ppj("OUT_DATA", "panel.pkl"))
+
+
+if __name__ == "__main__":
+    main()

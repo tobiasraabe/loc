@@ -2,20 +2,25 @@ import sys
 
 import matplotlib.pyplot as plt
 import numpy as np
-from bld.project_paths import project_paths_join as ppj
 from sklearn.externals import joblib
 
+from bld.project_paths import project_paths_join as ppj
 
-def plot(model, model_type):
-    """Plot the cumulative explained variance of a fa model."""
+
+def calculate_explained_variance_ratio_for_fa(model):
     fa = model.named_steps["fa"]
 
     # Calculate explained variance ratio
     m1 = fa.components_ ** 2
-    m2 = np.sum(m1, axis=1)
-    explained_variance_ratio = m2 / np.sum(m2)
+    m2 = m1.sum(axis=1)
+    explained_variance_ratio = m2 / m2.sum()
 
-    # Begin figure
+    return explained_variance_ratio
+
+
+def plot(explained_variance_ratio, model_type):
+    """Plot the cumulative explained variance of a fa model."""
+
     fig, ax = plt.subplots()
 
     ax.plot(explained_variance_ratio, label="Single")
@@ -45,4 +50,6 @@ if __name__ == "__main__":
     container = joblib.load(ppj("OUT_DATA", f"model_fa_{model_type}.pkl"))
     model = container["model"]
 
-    plot(model, model_type)
+    explained_variance_ratio = calculate_explained_variance_ratio_for_fa(model)
+
+    plot(explained_variance_ratio, model_type)

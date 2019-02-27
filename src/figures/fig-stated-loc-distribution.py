@@ -3,8 +3,9 @@ import sys
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from bld.project_paths import project_paths_join as ppj
 from scipy.stats import norm
+
+from bld.project_paths import project_paths_join as ppj
 
 
 def prepare_data(decomposition):

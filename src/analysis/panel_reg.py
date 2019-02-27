@@ -1,4 +1,5 @@
 import pandas as pd
+
 from bld.project_paths import project_paths_join as ppj
 
 
@@ -24,7 +25,6 @@ def prepare(df, loc_data):
             df[item], [-1, -0.1] + list(range(12, 73, 12)), include_lowest=True
         )
 
-    # Save the dataframe which is needed for the regressions as a pickle.
     df.to_pickle(ppj("OUT_ANALYSIS", "panel_reg.pkl"))
 
 

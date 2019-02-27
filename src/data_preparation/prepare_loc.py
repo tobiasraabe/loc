@@ -2,8 +2,9 @@ import json
 
 import numpy as np
 import pandas as pd
-from bld.project_paths import project_paths_join as ppj
 from sklearn.externals import joblib
+
+from bld.project_paths import project_paths_join as ppj
 
 
 # This list is ordered according to the item table in our paper.
@@ -82,7 +83,7 @@ if __name__ == "__main__":
     # Invert items so that higher numbers indicate greater feelings of control
     df = invert_items(df)
     # Calculate Cronbach's alpha for the whole scale
-    data = df[[i for i in df if "LOC" in i]].as_matrix().T
+    data = df[[i for i in df if "LOC" in i]].values.T
     cronbachs_alpha_ten = calculate_cronbachs_alpha(data)
     # Restrict to seven item scale proposed by Specht et al (2013)
     df = df[["ID", "YEAR"] + PERCEIVED_CONTROL]
@@ -90,7 +91,7 @@ if __name__ == "__main__":
     df = create_index(df)
     # Calculate Cronbach's Alpha for seven item scale. First, reshape the data
     # to n (items) * p (observations)
-    data = df[PERCEIVED_CONTROL].as_matrix().T
+    data = df[PERCEIVED_CONTROL].values.T
     cronbachs_alpha_seven = calculate_cronbachs_alpha(data)
     # Create container
     container = {}

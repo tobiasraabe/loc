@@ -1,7 +1,7 @@
 History
 =======
 
-0.0.1 (--.--.2019)
---------
+1.0.0 (27.01.2019)
+------------------
 
-* First release on Github.
+* Project Submission for Project Module.

@@ -6,7 +6,7 @@ Development Lead
 
 * Tobias Raabe <tobiasraabe@uni-bonn.de>
 
-Contributors
-------------
+Former Core Developers
+----------------------
 
 * Imke Strampe

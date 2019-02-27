@@ -6,6 +6,7 @@ from collections import OrderedDict
 
 import numpy as np
 import pandas as pd
+
 from bld.project_paths import project_paths_join as ppj
 
 
@@ -82,7 +83,7 @@ def prepare_bioagel():
     # Extract year number to determine whether mother was pregnant at the time
     # of the interview
     df.MOTHER_PREGNANT_AT_PQ_YEAR = df.MOTHER_PREGNANT_AT_PQ_YEAR.str.extract(
-        "\[(\d+)\]", expand=False
+        r"\[(\d+)\]", expand=False
     )
     df.MOTHER_PREGNANT_AT_PQ_YEAR = df.MOTHER_PREGNANT_AT_PQ_YEAR.astype(float)
 

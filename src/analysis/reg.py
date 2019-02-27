@@ -1,93 +1,95 @@
+import numpy as np  # noqa: F401
 import pandas as pd
 import statsmodels.formula.api as smf
+
 from bld.project_paths import project_paths_join as ppj
 
 
 TABLE_CONVERSION_1 = {
-    "FIRST_FACTOR_DELTA": "Change in Locus of Control",
-    "C(EVENT\_LAST\_JOB\_ENDED)[True]:EVENT\_LAST\_JOB\_ENDED\_TIME\_"
-    "DIFF:C(EMPLOYMENT\_STATUS)[T.Not Employed]": "Displacement * "
-    "Time Since Occurrence * Not Employed",
-    "C(EVENT\_LAST\_JOB\_ENDED)[True]:EVENT\_LAST\_JOB\_ENDED\_TIME\_"
-    "DIFF:C(EMPLOYMENT\_STATUS)[T.Other]": "Displacement * Time Since "
-    "Occurrence * Other Empl. Status",
-    "C(EVENT\_LAST\_JOB\_ENDED\_LIMITED)[True]:EVENT\_LAST\_JOB\_ENDED\_"
-    "LIMITED\_TIME\_DIFF:C(EMPLOYMENT\_STATUS)[T.Not Employed]": "Exog. "
-    "Displacement * Time Since Occurrence * Not Employed",
-    "C(EVENT\_LAST\_JOB\_ENDED\_LIMITED)[True]:EVENT\_LAST\_JOB\_ENDED\_"
-    "LIMITED\_TIME\_DIFF:C(EMPLOYMENT\_STATUS)[T.Other]": "Exog. Displacement "
-    "* Time Since Occurrence * Other Empl. Status",
-    "C(EVENT\_SEPARATED)[True]:EVENT\_SEPARATED\_TIME\_DIFF:C(MARITAL\_"
-    "STATUS)[T.Single]": "Separation * Time Since Occurrence * Single",
-    "C(MARITAL\_STATUS)[T.Single]:C(EVENT\_DIVORCED)[True]:EVENT\_DIVORCED\_"
-    "TIME\_DIFF": "Divorce * Single * Time Since Occurrence",
-    "C(MARITAL\_STATUS)[T.Single]:C(EVENT\_DIVORCED)[T.True]": "Divorce * " "Single",
-    "C(EVENT\_LAST\_JOB\_ENDED)[T.True]:C(EMPLOYMENT\_"
-    "STATUS)[T.Not Employed]": "Displacement * Not Employed",
-    "C(EVENT\_LAST\_JOB\_ENDED)[T.True]:C(EMPLOYMENT\_STATUS)[T.Other]": (
+    r"FIRST_FACTOR_DELTA": "Change in Locus of Control",
+    r"C(EVENT\_LAST\_JOB\_ENDED)[True]:EVENT\_LAST\_JOB\_ENDED\_TIME\_"
+    r"DIFF:C(EMPLOYMENT\_STATUS)[T.Not Employed]": "Displacement * "
+    r"Time Since Occurrence * Not Employed",
+    r"C(EVENT\_LAST\_JOB\_ENDED)[True]:EVENT\_LAST\_JOB\_ENDED\_TIME\_"
+    r"DIFF:C(EMPLOYMENT\_STATUS)[T.Other]": "Displacement * Time Since "
+    r"Occurrence * Other Empl. Status",
+    r"C(EVENT\_LAST\_JOB\_ENDED\_LIMITED)[True]:EVENT\_LAST\_JOB\_ENDED\_"
+    r"LIMITED\_TIME\_DIFF:C(EMPLOYMENT\_STATUS)[T.Not Employed]": "Exog. "
+    r"Displacement * Time Since Occurrence * Not Employed",
+    r"C(EVENT\_LAST\_JOB\_ENDED\_LIMITED)[True]:EVENT\_LAST\_JOB\_ENDED\_"
+    r"LIMITED\_TIME\_DIFF:C(EMPLOYMENT\_STATUS)[T.Other]": "Exog. Displacement "
+    r"* Time Since Occurrence * Other Empl. Status",
+    r"C(EVENT\_SEPARATED)[True]:EVENT\_SEPARATED\_TIME\_DIFF:C(MARITAL\_"
+    r"STATUS)[T.Single]": "Separation * Time Since Occurrence * Single",
+    r"C(MARITAL\_STATUS)[T.Single]:C(EVENT\_DIVORCED)[True]:EVENT\_DIVORCED\_"
+    r"TIME\_DIFF": "Divorce * Single * Time Since Occurrence",
+    r"C(MARITAL\_STATUS)[T.Single]:C(EVENT\_DIVORCED)[T.True]": "Divorce * " "Single",
+    r"C(EVENT\_LAST\_JOB\_ENDED)[T.True]:C(EMPLOYMENT\_"
+    r"STATUS)[T.Not Employed]": "Displacement * Not Employed",
+    r"C(EVENT\_LAST\_JOB\_ENDED)[T.True]:C(EMPLOYMENT\_STATUS)[T.Other]": (
         "Displacement * Other Empl. Status"
     ),
-    "C(EVENT\_LAST\_JOB\_ENDED\_LIMITED)[T.True]:C(EMPLOYMENT\_STATUS)"
-    "[T.Not Employed]": "Exog. Displacement * Not Employed",
-    "C(EVENT\_LAST\_JOB\_ENDED\_LIMITED)[T.True]:C(EMPLOYMENT\_STATUS)"
-    "[T.Other]": "Exog. Displacement * Other Empl. Status",
-    "C(EVENT\_SEPARATED)[T.True]:C(MARITAL\_STATUS)[T.Single]": "Separation * "
-    "Single",
-    "C(EVENT\_CHILD\_DISORDER)[True]:EVENT\_CHILD\_DISORDER\_TIME\_DIFF": (
+    r"C(EVENT\_LAST\_JOB\_ENDED\_LIMITED)[T.True]:C(EMPLOYMENT\_STATUS)"
+    r"[T.Not Employed]": "Exog. Displacement * Not Employed",
+    r"C(EVENT\_LAST\_JOB\_ENDED\_LIMITED)[T.True]:C(EMPLOYMENT\_STATUS)"
+    r"[T.Other]": "Exog. Displacement * Other Empl. Status",
+    r"C(EVENT\_SEPARATED)[T.True]:C(MARITAL\_STATUS)[T.Single]": "Separation * "
+    r"Single",
+    r"C(EVENT\_CHILD\_DISORDER)[True]:EVENT\_CHILD\_DISORDER\_TIME\_DIFF": (
         "Child Disorders * Time Since Occurrence"
     ),
-    "C(EVENT\_DEATH\_CHILD)[True]:EVENT\_DEATH\_CHILD\_TIME\_DIFF": (
+    r"C(EVENT\_DEATH\_CHILD)[True]:EVENT\_DEATH\_CHILD\_TIME\_DIFF": (
         "Child Death * Time Since Occurrence"
     ),
-    "C(EVENT\_DEATH\_FATHER)[True]:EVENT\_DEATH\_FATHER\_TIME\_DIFF": (
+    r"C(EVENT\_DEATH\_FATHER)[True]:EVENT\_DEATH\_FATHER\_TIME\_DIFF": (
         "Father Death * Time Since Occurrence"
     ),
-    "C(EVENT\_DEATH\_HH\_PERSON)[True]:EVENT\_DEATH\_HH\_PERSON\_TIME\_DIFF": (
+    r"C(EVENT\_DEATH\_HH\_PERSON)[True]:EVENT\_DEATH\_HH\_PERSON\_TIME\_DIFF": (
         "Household Person Death * Time Since Occurrence"
     ),
-    "C(EVENT\_DEATH\_MOTHER)[True]:EVENT\_DEATH\_MOTHER\_TIME\_DIFF": (
+    r"C(EVENT\_DEATH\_MOTHER)[True]:EVENT\_DEATH\_MOTHER\_TIME\_DIFF": (
         "Mother Death * Time Since Occurrence"
     ),
-    "C(EVENT\_DEATH\_PARTNER)[True]:EVENT\_DEATH\_PARTNER\_TIME\_DIFF": (
+    r"C(EVENT\_DEATH\_PARTNER)[True]:EVENT\_DEATH\_PARTNER\_TIME\_DIFF": (
         "Partner Death * Time Since Occurrence"
     ),
-    "C(EVENT\_DIVORCED)[True]:EVENT\_DIVORCED\_TIME\_DIFF": (
+    r"C(EVENT\_DIVORCED)[True]:EVENT\_DIVORCED\_TIME\_DIFF": (
         "Divorce * Time Since Occurrence"
     ),
-    "C(EVENT\_HH\_COMP\_CHANGE)[True]:EVENT\_HH\_COMP\_CHANGE\_TIME\_DIFF": (
+    r"C(EVENT\_HH\_COMP\_CHANGE)[True]:EVENT\_HH\_COMP\_CHANGE\_TIME\_DIFF": (
         "HH Composition Changed * Time Since Occurrence"
     ),
-    "C(EVENT\_LAST\_JOB\_ENDED)[True]:EVENT\_LAST\_JOB\_ENDED\_TIME\_DIFF": (
+    r"C(EVENT\_LAST\_JOB\_ENDED)[True]:EVENT\_LAST\_JOB\_ENDED\_TIME\_DIFF": (
         "Displacement * Time Since Occurrence"
     ),
-    "C(EVENT\_LAST\_JOB\_ENDED\_LIMITED)[True]:EVENT\_LAST\_JOB\_ENDED\_"
-    "LIMITED\_TIME\_DIFF": "Exog. Displacement * Time Since Occurrence",
-    "C(EVENT\_LEGALLY\_HANDICAPPED\_PERC)[True]:EVENT\_LEGALLY\_HANDICAPPED\_"
-    "PERC\_TIME\_DIFF": "Handicapped * Time Since Occurrence",
-    "C(EVENT\_PREGNANCY\_UNPLANNED)[True]:EVENT\_PREGNANCY\_UNPLANNED\_TIME\_"
+    r"C(EVENT\_LAST\_JOB\_ENDED\_LIMITED)[True]:EVENT\_LAST\_JOB\_ENDED\_"
+    r"LIMITED\_TIME\_DIFF": "Exog. Displacement * Time Since Occurrence",
+    r"C(EVENT\_LEGALLY\_HANDICAPPED\_PERC)[True]:EVENT\_LEGALLY\_HANDICAPPED\_"
+    r"PERC\_TIME\_DIFF": "Handicapped * Time Since Occurrence",
+    r"C(EVENT\_PREGNANCY\_UNPLANNED)[True]:EVENT\_PREGNANCY\_UNPLANNED\_TIME\_"
     "DIFF": "Unplanned Pregnancy * Time Since Occurrence",
-    "C(EVENT\_SEPARATED)[True]:EVENT\_SEPARATED\_TIME\_DIFF": (
+    r"C(EVENT\_SEPARATED)[True]:EVENT\_SEPARATED\_TIME\_DIFF": (
         "Separation * Time Since Occurrence"
     ),
-    "C(EVENT\_CHILD\_DISORDER)[T.True]": "Child Has Disorders",
-    "C(EVENT\_DEATH\_CHILD)[T.True]": "Death of Child",
-    "C(EVENT\_DEATH\_FATHER)[T.True]": "Death of Father",
-    "C(EVENT\_DEATH\_HH\_PERSON)[T.True]": "Death of HH Person",
-    "C(EVENT\_DEATH\_MOTHER)[T.True]": "Death of Mother",
-    "C(EVENT\_DEATH\_PARTNER)[T.True]": "Death of Partner",
-    "C(EVENT\_DIVORCED)[T.True]": "Divorce",
-    "C(EVENT\_HH\_COMP\_CHANGE)[T.True]": "HH Composition Changed",
-    "C(EVENT\_LAST\_JOB\_ENDED)[T.True]": "Displacement",
-    "C(EVENT\_LEGALLY\_HANDICAPPED\_PERC)[T.True]": "Legally Handicapped",
-    "C(EVENT\_PREGNANCY\_UNPLANNED)[T.True]": "Unplanned Pregnancy",
-    "C(EVENT\_SEPARATED)[T.True]": "Separation",
-    "C(EVENT\_LAST\_JOB\_ENDED\_LIMITED)[T.True]": "Exogenous Displacement",
+    r"C(EVENT\_CHILD\_DISORDER)[T.True]": "Child Has Disorders",
+    r"C(EVENT\_DEATH\_CHILD)[T.True]": "Death of Child",
+    r"C(EVENT\_DEATH\_FATHER)[T.True]": "Death of Father",
+    r"C(EVENT\_DEATH\_HH\_PERSON)[T.True]": "Death of HH Person",
+    r"C(EVENT\_DEATH\_MOTHER)[T.True]": "Death of Mother",
+    r"C(EVENT\_DEATH\_PARTNER)[T.True]": "Death of Partner",
+    r"C(EVENT\_DIVORCED)[T.True]": "Divorce",
+    r"C(EVENT\_HH\_COMP\_CHANGE)[T.True]": "HH Composition Changed",
+    r"C(EVENT\_LAST\_JOB\_ENDED)[T.True]": "Displacement",
+    r"C(EVENT\_LEGALLY\_HANDICAPPED\_PERC)[T.True]": "Legally Handicapped",
+    r"C(EVENT\_PREGNANCY\_UNPLANNED)[T.True]": "Unplanned Pregnancy",
+    r"C(EVENT\_SEPARATED)[T.True]": "Separation",
+    r"C(EVENT\_LAST\_JOB\_ENDED\_LIMITED)[T.True]": "Exogenous Displacement",
 }
 
 TABLE_CONVERSION_2 = {
     "FIRST_FACTOR_DELTA": "Change in Locus of Control",
-    "I(EVENT\_COUNTS\_ALL ** 2)": "Number of Traumata Squared",
-    "EVENT\_COUNTS\_ALL": "Number of Traumata",
+    r"I(EVENT\_COUNTS\_ALL ** 2)": "Number of Traumata Squared",
+    r"EVENT\_COUNTS\_ALL": "Number of Traumata",
 }
 
 

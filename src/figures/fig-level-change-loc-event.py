@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import statsmodels.formula.api as smf
+
 from bld.project_paths import project_paths_join as ppj
 
 EVENT_VARIABLES = [
@@ -69,7 +70,7 @@ def create_graph(table):
 
     table.iloc[:, :2].plot.bar(rot=70, ax=ax)
 
-    ax.set_ylabel("$\Delta$ Locus of Control")
+    ax.set_ylabel(r"$\Delta$ Locus of Control")
 
     ax.legend()
 

@@ -4,6 +4,7 @@
 import json
 
 import pandas as pd
+
 from bld.project_paths import project_paths_join as ppj
 
 
@@ -121,7 +122,7 @@ def generate_descriptive_statistics(df, event):
         f.write(f"\t\\caption{{Descriptive Statistics - Event: {event_name}}}\n")
         f.write(f"\t\\label{{tab:descriptive-statistics-{event_fn}}}\n")
         f.write("\t\\centering")
-        f.write("\t\\begin{tabular}{>{\quad}lcc}\n")
+        f.write("\t\\begin{tabular}{>{\\quad}lcc}\n")
         f.write("\t\\toprule\n")
         f.write(f"\t & \\textbf {{No Event}} & \\textbf{{Event}} \\\\\n")
         f.write("\t & mean/share & mean/share \\\\\n")

@@ -1,9 +1,9 @@
 import pandas as pd
-from bld.project_paths import project_paths_join as ppj
 from sklearn.decomposition import FactorAnalysis
 from sklearn.externals import joblib
 from sklearn.pipeline import Pipeline
 
+from bld.project_paths import project_paths_join as ppj
 from src import LOC_PERCEIVED_CONTROL
 
 

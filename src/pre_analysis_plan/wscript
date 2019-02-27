@@ -3,7 +3,7 @@ def build(ctx):
     ctx(
         features="tex",
         source="pre_analysis_plan.tex",
-        prompt=1,
+        prompt=0,
         name="pre_analysis_plan",
     )
     # Install to the project root.

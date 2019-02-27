@@ -3,6 +3,7 @@
 """
 import numpy as np
 import pandas as pd
+
 from bld.project_paths import project_paths_join as ppj
 
 
@@ -15,7 +16,6 @@ NAN_IDENTIFIERS = [
 ]
 
 VARIABLE_NAMES_PGEN = {
-    # General variables
     # 'cid': 'ID_ORIGINAL_HH',  # Case id, id of original household
     "syear": "YEAR",  # survey year
     # 'hid': 'ID_HH',  # current household id
@@ -29,16 +29,15 @@ RETAINED_COLUMNS_PGEN = list(VARIABLE_NAMES_PGEN.keys())
 
 
 def main():
-    # Load dataset
     df = pd.read_stata(ppj("IN_DATA", "pgen.dta"), columns=RETAINED_COLUMNS_PGEN)
     df = df.rename(columns=VARIABLE_NAMES_PGEN)
-    # Identify missing values
+
     df.replace(to_replace=NAN_IDENTIFIERS, value=np.nan, inplace=True)
     for i in [i for i in df if "EDUCATION" in i]:
         df[i].cat.remove_unused_categories(inplace=True)
+
     # Fill NaNs conservatively meaning only a forward fill since educational
-    # qualification cannot be lost. (In a previous version, we also backfilled
-    # values.)
+    # qualification cannot be lost. (In a previous version, we also backfilled values.)
     for var in [i for i in df if "EDUCATION" in i]:
         df[var] = df.groupby("ID")[var].transform(lambda x: x.fillna(method="ffill"))
 
