@@ -30,9 +30,12 @@ def build(ctx):
             features="run_py_script",
             source="fig-stated-loc-distribution.py",
             deps=ctx.path_to(ctx, "OUT_DATA", f"loc_{decomposition}.pkl"),
-            target=ctx.path_to(
-                ctx, "OUT_FIGURES", f"fig-stated-loc-{decomposition}.png"
-            ),
+            target=[
+                ctx.path_to(ctx, "OUT_FIGURES", f"fig-stated-loc-{decomposition}.png"),
+                ctx.path_to(
+                    ctx, "OUT_FIGURES", f"fig-stated-loc-by-year-{decomposition}.png"
+                ),
+            ],
             append=decomposition,
             name=f"stated_loc_{decomposition}",
         )
