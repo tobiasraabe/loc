@@ -101,14 +101,11 @@ def main(df):
     ]
     # Set up column with counts of all traumatic events.
     df["EVENT_COUNTS_ALL"] = df[list_counts].sum(axis=1)
-    # Replace all 0 values in net hh income with 2 as ln(0) is not possible in
-    # regression.
-    df["HH_NET_INCOME_YEAR"] = df["HH_NET_INCOME_YEAR"].replace([0.0], [2.0])
 
     # Run first specification.
     model_1 = smf.ols(
         "FIRST_FACTOR_DELTA ~ C(EDUCATION_GROUPS_ISCED97) + C("
-        "MIGRATION_STATUS) + C(AGE_GROUPS) + C(GENDER) + np.log("
+        "MIGRATION_STATUS) + C(AGE_GROUPS) + C(GENDER) + np.arcsinh("
         "HH_NET_INCOME_YEAR) + C(EVENT_CHILD_DISORDER) + C("
         "EVENT_CHILD_DISORDER):EVENT_CHILD_DISORDER_TIME_DIFF + C("
         "EVENT_DEATH_CHILD) + C("
@@ -146,7 +143,7 @@ def main(df):
     # Run second specification.
     model_2 = smf.ols(
         "FIRST_FACTOR_DELTA ~ C(EDUCATION_GROUPS_ISCED97) + C("
-        "MIGRATION_STATUS) + C(AGE_GROUPS) + C(GENDER) + np.log("
+        "MIGRATION_STATUS) + C(AGE_GROUPS) + C(GENDER) + np.arcsinh("
         "HH_NET_INCOME_YEAR) + C(MARITAL_STATUS) + C(EVENT_CHILD_DISORDER) + "
         "C(EVENT_CHILD_DISORDER):EVENT_CHILD_DISORDER_TIME_DIFF + C("
         "EVENT_DEATH_CHILD) + C("
@@ -180,7 +177,7 @@ def main(df):
     model_3 = smf.ols(
         "FIRST_FACTOR_DELTA ~ C(EDUCATION_GROUPS_ISCED97) + C("
         "EMPLOYMENT_STATUS) + C(MIGRATION_STATUS) + C(AGE_GROUPS) + C("
-        "GENDER) + np.log(HH_NET_INCOME_YEAR) + C(MARITAL_STATUS) + "
+        "GENDER) + np.arcsinh(HH_NET_INCOME_YEAR) + C(MARITAL_STATUS) + "
         "EVENT_COUNTS_ALL + I(EVENT_COUNTS_ALL**2)",
         df,
     )
@@ -190,7 +187,7 @@ def main(df):
     #  groups.
     model_4 = smf.ols(
         "FIRST_FACTOR_DELTA ~ C(EDUCATION_GROUPS_ISCED97) + C("
-        "MIGRATION_STATUS) + C(AGE_GROUPS) + C(GENDER) + np.log("
+        "MIGRATION_STATUS) + C(AGE_GROUPS) + C(GENDER) + np.arcsinh("
         "HH_NET_INCOME_YEAR) + C(MARITAL_STATUS) + "
         "C(EVENT_CHILD_DISORDER):C(EVENT_CHILD_DISORDER_TIME_DIFF_GROUP)"
         # 'C(EVENT_DEATH_CHILD) + C(EVENT_DEATH_CHILD):C('

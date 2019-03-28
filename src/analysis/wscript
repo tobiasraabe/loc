@@ -41,13 +41,13 @@ def build(ctx):
 
     ctx(
         features="run_py_script",
-        source="panel_reg.py",
+        source="create_regression_data.py",
         deps=[
             ctx.path_to(ctx, "OUT_DATA", "loc_fa.pkl"),
             ctx.path_to(ctx, "OUT_DATA", "panel.pkl"),
         ],
         target=ctx.path_to(ctx, "OUT_ANALYSIS", "panel_reg.pkl"),
-        name="panel_reg",
+        name="create_regression_data",
     )
 
     ctx(
