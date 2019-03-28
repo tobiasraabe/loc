@@ -10,18 +10,18 @@ dependencies:
   - statsmodels=0.9.0
   - pip:
     - doc8==0.8.0
-    - ipdb==0.11
+    - ipdb==0.12
     - jupyterlab==0.35.4
-    - matplotlib==3.0.2
+    - matplotlib==3.0.3
     - nbsphinx==0.4.2
-    - pandas==0.24.1
+    - pandas==0.24.2
     - pre-commit==1.14.4
     - pybtex==0.22.2
-    - pytest==4.3.0
+    - pytest==4.3.1
     - pytest-cov==2.6.1
     - pytest-pythonpath==0.7.3
-    - restructuredtext_lint==1.2.2
-    - sphinx==1.8.4
+    - restructuredtext_lint==1.3.0
+    - sphinx==1.8.5
     - sphinx-rtd-theme==0.4.3
     - sphinxcontrib-bibtex==0.4.2
     - tox==3.7.0
