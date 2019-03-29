@@ -2,8 +2,37 @@ import pandas as pd
 
 from bld.project_paths import project_paths_join as ppj
 
+EVENTS_SOCIAL = [
+    "CHILD_DISORDER",
+    "DEATH_CHILD",
+    "DEATH_FATHER",
+    "DEATH_HH_PERSON",
+    "DEATH_MOTHER",
+    "DEATH_PARTNER",
+    "DIVORCED",
+    "HH_COMP_CHANGE",
+    "SEPARATED",
+]
 
-def prepare(df, loc_data):
+EVENTS_ECONOMIC = ["LAST_JOB_ENDED"]
+
+EVENTS_HEALTH = ["LEGALLY_HANDICAPPED_PERC", "PREGNANCY_UNPLANNED"]
+
+EVENTS_ALL = EVENTS_SOCIAL + EVENTS_ECONOMIC + EVENTS_HEALTH
+
+COVARIATES_CATEGORICAL = [
+    "AGE_GROUPS",
+    "EDUCATION_GROUPS_ISCED97",
+    "EMPLOYMENT_STATUS",
+    "GENDER",
+    "MARITAL_STATUS",
+    "MIGRATION_STATUS",
+]
+
+COVARIATES_CONTINUOUS = ["HH_NET_INCOME_YEAR"]
+
+
+def merge_data(df, loc_data):
     # Separate loc data for the three different years.
     loc_years = [2005, 2010, 2015]
     loc_data_2005, loc_data_2010, loc_data_2015 = [
@@ -15,6 +44,19 @@ def prepare(df, loc_data):
         loc_data[["ID", "YEAR", "FIRST_FACTOR_DELTA"]], on=["ID", "YEAR"], how="left"
     )
 
+    return df
+
+
+def create_variables(df):
+    # Create dependent variables
+    df["EVENT_ANY"] = df[["EVENT_" + i for i in EVENTS_ALL]].any(axis=1)
+    df["EVENT_COUNT"] = df[["EVENT_" + i + "_COUNT" for i in EVENTS_ALL]].sum(axis=1)
+    df["EVENT_SOCIAL"] = df[["EVENT_" + i for i in EVENTS_SOCIAL]].any(axis=1)
+    df["EVENT_ECONOMIC"] = df[["EVENT_" + i for i in EVENTS_ECONOMIC]].any(axis=1)
+    df["EVENT_HEALTH"] = df[["EVENT_" + i for i in EVENTS_HEALTH]].any(axis=1)
+
+    # Create covariates
+
     # Form 8 age groups. Each group encompasses about one decade.
     df["AGE_GROUPS"] = pd.cut(df["AGE"], list(range(20, 81, 10)) + [105])
 
@@ -25,10 +67,19 @@ def prepare(df, loc_data):
             df[item], [-1, -0.1] + list(range(12, 73, 12)), include_lowest=True
         )
 
+    return df
+
+
+def main():
+    loc = pd.read_pickle(ppj("OUT_DATA", "loc_fa.pkl"))
+    df = pd.read_pickle(ppj("OUT_DATA", "panel.pkl"))
+
+    df = merge_data(df, loc)
+
+    df = create_variables(df)
+
     df.to_pickle(ppj("OUT_ANALYSIS", "panel_reg.pkl"))
 
 
 if __name__ == "__main__":
-    loc = pd.read_pickle(ppj("OUT_DATA", "loc_fa.pkl"))
-    df = pd.read_pickle(ppj("OUT_DATA", "panel.pkl"))
-    prepare(df, loc)
+    main()
